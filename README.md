@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Algion株式会社 コーポレートWebサイト
 
-## Getting Started
+> Algion株式会社のコーポレートWebサイトのソースコードです。Next.js によって構築され、Cloudflare Pages 上で高速かつ安全にホスティングされています。
 
-First, run the development server:
+## 技術スタック
+
+- [Next.js](https://nextjs.org) - React フレームワーク
+- TypeScript - 型安全性
+- Tailwind CSS - スタイリング
+- Cloudflare Pages - ホスティング
+- Cloudflare Functions - サーバーサイド機能（お問い合わせフォーム等）
+
+## 開発環境のセットアップ
+
+### 必要な環境
+
+- Node.js 18以上
+- npm または yarn
+
+### ローカル開発サーバーの起動
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてサイトを確認できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ビルド
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+## デプロイ
 
-To learn more about Next.js, take a look at the following resources:
+このサイトは Cloudflare Pages でホスティングされており、main ブランチへの push により自動で本番環境へデプロイされます。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## お問い合わせ機能
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+お問い合わせフォームは Cloudflare Pages Functions と Gmail API を組み合わせてメール送信を実現しています。環境変数の設定については `CLOUDFLARE_SETUP.md` を参照してください。
