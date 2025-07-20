@@ -32,7 +32,7 @@ function generateArticlesData() {
         
         try {
           const fileContent = fs.readFileSync(filePath, 'utf-8');
-          const { data, content } = matter(fileContent);
+          const { data } = matter(fileContent);
 
           // 必須フィールドの検証
           if (!data.title || !data.date || !data.excerpt) {

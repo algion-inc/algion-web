@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Eye, Target } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -56,9 +57,11 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-3 gap-8 mb-8">
               <div className="md:col-span-1">
                 <div className="relative">
-                  <img 
+                  <Image 
                     src="/hideaki-okamoto-profile.jpg"
                     alt="岡本 秀明"
+                    width={400}
+                    height={533}
                     className="w-full max-w-sm mx-auto rounded-2xl shadow-elegant object-cover aspect-[3/4]"
                   />
                 </div>
