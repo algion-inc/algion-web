@@ -861,7 +861,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Vision</h3>
               </div>
-              <p className="text-gray-900 text-lg">本来の人々の可能性を最大限に引き出す</p>
+              <p className="text-gray-900 text-lg">人々の可能性を最大限に引き出す</p>
             </div>
             
             <div className="bg-white p-8 rounded-2xl shadow-elegant">

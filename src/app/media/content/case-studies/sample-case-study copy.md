@@ -1,9 +1,9 @@
 ---
 title: "サンプル記事タイトル"
-category: "技術解説"
-date: "2025-07-10"
+category: "導入事例"
+date: "2025-07-05"
 excerpt: "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。"
-slug: "sample-technical"
+slug: "sample-case-study"
 author: "岡本 秀明"
 tags: ["サンプル", "テンプレート"]
 featured: false
