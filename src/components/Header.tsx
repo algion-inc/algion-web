@@ -14,7 +14,7 @@ const Header = () => {
             <Link href="/" className="group">
               <div className="bg-black rounded-xl overflow-hidden group-hover:-translate-y-1 transition-all duration-300 shadow-elegant group-hover:shadow-elegant-hover">
                 <div className="px-4 sm:px-8 py-2 sm:py-3">
-                  <span className="text-white font-bold text-2xl sm:text-3xl tracking-tight text-hierarchy-primary">Algion</span>
+                  <span className="text-white font-bold text-2xl sm:text-3xl tracking-tight opacity-100">Algion</span>
                 </div>
               </div>
             </Link>
@@ -26,8 +26,8 @@ const Header = () => {
               href="/"
               className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
                 pathname === '/' 
-                  ? 'text-white text-hierarchy-primary after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white text-hierarchy-tertiary hover:text-hierarchy-primary'
+                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'text-white opacity-60 hover:opacity-100'
               }`}
             >
               ホーム
@@ -35,9 +35,9 @@ const Header = () => {
             <Link 
               href="/services"
               className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/services' 
-                  ? 'text-white text-hierarchy-primary after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white text-hierarchy-tertiary hover:text-hierarchy-primary'
+                pathname === '/services' || pathname === '/services/'
+                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'text-white opacity-60 hover:opacity-100'
               }`}
             >
               サービス
@@ -45,9 +45,9 @@ const Header = () => {
             <Link 
               href="/media"
               className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/media' 
-                  ? 'text-white text-hierarchy-primary after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white text-hierarchy-tertiary hover:text-hierarchy-primary'
+                pathname === '/media' || pathname?.startsWith('/media/') 
+                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'text-white opacity-60 hover:opacity-100'
               }`}
             >
               メディア
@@ -55,9 +55,9 @@ const Header = () => {
             <Link 
               href="/about"
               className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/about' 
-                  ? 'text-white text-hierarchy-primary after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white text-hierarchy-tertiary hover:text-hierarchy-primary'
+                pathname === '/about' || pathname === '/about/'
+                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'text-white opacity-60 hover:opacity-100'
               }`}
             >
               会社情報
