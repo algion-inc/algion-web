@@ -1,9 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Eye, Target, Zap, Users, Mail, Globe, ArrowRight } from 'lucide-react';
-import { getLatestArticles } from '@/data/articles';
+import articlesData from '../data/articles.json';
+
+interface Article {
+  id: number;
+  title: string;
+  category: "導入事例" | "技術解説" | "お知らせ";
+  date: string;
+  slug: string;
+}
 
 // Types for Transformer/Attention-based Neural Field
 interface AttentionNodeType {
@@ -807,6 +815,9 @@ const TransformerAttentionField = () => {
 };
 
 export default function HomePage() {
+  // ビルド時に生成された静的データを使用
+  const articles = articlesData.latestByCategory as Article[];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -827,14 +838,14 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link 
                 href="/services"
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group min-w-[220px] text-center"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group min-w-[220px]"
               >
                 <span className="mr-2">サービスを見る</span>
                 <ChevronRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
               <Link 
                 href="/contact"
-                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 hover:-translate-y-1 transition-all duration-300 min-w-[220px] text-center"
+                className="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 hover:-translate-y-1 transition-all duration-300 min-w-[220px]"
               >
                 お問い合わせ
               </Link>
@@ -921,10 +932,10 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="text-center">
+          <div className="flex justify-center mt-16">
             <Link 
               href="/services"
-              className="bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
+              className="inline-flex items-center bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
             >
               <span className="mr-2">サービス一覧を見る</span>
               <ArrowRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -946,32 +957,32 @@ export default function HomePage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {getLatestArticles(3).map((article) => (
+            {articles.map((article) => (
               <Link 
                 key={article.id}
-                href="/media"
-                className="bg-white p-6 rounded-2xl shadow-elegant hover:shadow-elegant-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col"
+                href={`/media/${article.slug}`}
+                className="bg-white p-6 rounded-2xl shadow-elegant hover:shadow-elegant-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col group"
               >
                 <div className="mb-4">
                   <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
                     {article.category}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 flex-1">
+                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 flex-1 group-hover:text-gray-700 transition-colors">
                   {article.title}
                 </h3>
                 <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
                   <span>{article.date}</span>
-                  <ArrowRight size={16} className="text-gray-400" />
+                  <ArrowRight size={16} className="text-gray-400 group-hover:text-black transition-colors" />
                 </div>
               </Link>
             ))}
           </div>
           
-          <div className="text-center">
+          <div className="flex justify-center mt-16">
             <Link 
               href="/media"
-              className="bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
+              className="inline-flex items-center bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
             >
               <span className="mr-2">メディアを見る</span>
               <ArrowRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -992,7 +1003,7 @@ export default function HomePage() {
             </p>
             <Link 
               href="/contact"
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group"
+              className="inline-flex items-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group"
             >
               <Mail className="inline-block w-5 h-5 mr-2" />
               <span className="mr-2">お問い合わせ</span>

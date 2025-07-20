@@ -38,22 +38,22 @@ interface FrontmatterData {
 }
 
 // 型ガード関数
-function isValidCategory(category: any): category is Article['category'] {
+function isValidCategory(category: unknown): category is Article['category'] {
   return typeof category === 'string' && 
          ['導入事例', '技術解説', 'お知らせ'].includes(category);
 }
 
-function isValidDate(date: any): boolean {
+function isValidDate(date: unknown): boolean {
   if (typeof date !== 'string') return false;
   const parsedDate = new Date(date);
   return !isNaN(parsedDate.getTime());
 }
 
-function isValidTags(tags: any): tags is string[] {
+function isValidTags(tags: unknown): tags is string[] {
   return Array.isArray(tags) && tags.every(tag => typeof tag === 'string');
 }
 
-function validateFrontmatter(data: any, filePath: string): {
+function validateFrontmatter(data: unknown): {
   isValid: boolean;
   validatedData: Partial<FrontmatterData>;
   errors: string[];
@@ -61,65 +61,73 @@ function validateFrontmatter(data: any, filePath: string): {
   const errors: string[] = [];
   const validatedData: Partial<FrontmatterData> = {};
 
+  // dataが有効なオブジェクトかチェック
+  if (!data || typeof data !== 'object') {
+    errors.push('frontmatter data must be an object');
+    return { isValid: false, validatedData, errors };
+  }
+
+  const frontmatter = data as Record<string, unknown>;
+
   // title検証
-  if (typeof data.title === 'string' && data.title.trim()) {
-    validatedData.title = data.title.trim();
+  if (typeof frontmatter.title === 'string' && frontmatter.title.trim()) {
+    validatedData.title = frontmatter.title.trim();
   } else {
     errors.push('title is required and must be a non-empty string');
   }
 
   // category検証
-  if (isValidCategory(data.category)) {
-    validatedData.category = data.category;
+  if (isValidCategory(frontmatter.category)) {
+    validatedData.category = frontmatter.category;
   } else {
     errors.push('category must be one of: 導入事例, 技術解説, お知らせ');
   }
 
   // date検証
-  if (isValidDate(data.date)) {
-    validatedData.date = data.date;
+  if (isValidDate(frontmatter.date)) {
+    validatedData.date = frontmatter.date as string;
   } else {
     errors.push('date must be a valid date string (YYYY-MM-DD format recommended)');
   }
 
   // excerpt検証
-  if (typeof data.excerpt === 'string' && data.excerpt.trim()) {
-    validatedData.excerpt = data.excerpt.trim();
+  if (typeof frontmatter.excerpt === 'string' && frontmatter.excerpt.trim()) {
+    validatedData.excerpt = frontmatter.excerpt.trim();
   } else {
     errors.push('excerpt is required and must be a non-empty string');
   }
 
   // slug検証（オプション）
-  if (data.slug !== undefined) {
-    if (typeof data.slug === 'string' && data.slug.trim()) {
-      validatedData.slug = data.slug.trim();
+  if (frontmatter.slug !== undefined) {
+    if (typeof frontmatter.slug === 'string' && frontmatter.slug.trim()) {
+      validatedData.slug = frontmatter.slug.trim();
     } else {
       errors.push('slug must be a non-empty string if provided');
     }
   }
 
   // author検証（オプション）
-  if (data.author !== undefined) {
-    if (typeof data.author === 'string' && data.author.trim()) {
-      validatedData.author = data.author.trim();
+  if (frontmatter.author !== undefined) {
+    if (typeof frontmatter.author === 'string' && frontmatter.author.trim()) {
+      validatedData.author = frontmatter.author.trim();
     } else {
       errors.push('author must be a non-empty string if provided');
     }
   }
 
   // tags検証（オプション）
-  if (data.tags !== undefined) {
-    if (isValidTags(data.tags)) {
-      validatedData.tags = data.tags;
+  if (frontmatter.tags !== undefined) {
+    if (isValidTags(frontmatter.tags)) {
+      validatedData.tags = frontmatter.tags;
     } else {
       errors.push('tags must be an array of strings if provided');
     }
   }
 
   // featured検証（オプション）
-  if (data.featured !== undefined) {
-    if (typeof data.featured === 'boolean') {
-      validatedData.featured = data.featured;
+  if (frontmatter.featured !== undefined) {
+    if (typeof frontmatter.featured === 'boolean') {
+      validatedData.featured = frontmatter.featured;
     } else {
       errors.push('featured must be a boolean if provided');
     }
@@ -167,7 +175,7 @@ export async function getArticles(): Promise<Article[]> {
         const { data, content } = matter(fileContent);
 
         // frontmatterデータの検証
-        const validation = validateFrontmatter(data, filePath);
+        const validation = validateFrontmatter(data);
         
         if (!validation.isValid) {
           console.error(`Invalid frontmatter in ${filePath}:`);
@@ -193,7 +201,7 @@ export async function getArticles(): Promise<Article[]> {
         const article: Article = {
           id: idCounter++,
           title: validData.title || 'タイトルなし',
-          category: validData.category || category,
+          category: (validData.category || category) as Article['category'],
           date: formattedDate,
           rawDate: rawDate,
           excerpt: validData.excerpt || '',
@@ -247,6 +255,28 @@ export const getArticlesByCategory = async (category: Article['category']): Prom
   }
 };
 
+
+// 各カテゴリから最新1記事ずつ取得（ホームページ用）
+export const getLatestByCategory = async (): Promise<Article[]> => {
+  try {
+    const articles = await getArticles();
+    const categories: Article['category'][] = ['導入事例', '技術解説', 'お知らせ'];
+    const latestByCategory: Article[] = [];
+
+    categories.forEach(category => {
+      const categoryArticles = articles.filter(article => article.category === category);
+      if (categoryArticles.length > 0) {
+        // 各カテゴリの最新記事（既にrawDateでソート済み）
+        latestByCategory.push(categoryArticles[0]);
+      }
+    });
+
+    return latestByCategory;
+  } catch (error) {
+    console.error('Error getting latest articles by category:', error);
+    return [];
+  }
+};
 
 // スラッグで記事を取得（将来の個別記事ページ用）
 export const getArticleBySlug = async (slug: string): Promise<Article | null> => {
