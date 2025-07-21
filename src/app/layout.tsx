@@ -16,7 +16,33 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: "Algion株式会社",
-  description: "データとアルゴリズムで人々のビジョンを実現する",
+  description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
+  keywords: "AI, 人工知能, LLM, 大規模言語モデル, AIコンサルティング, SaaS, 機械学習, データサイエンス",
+  authors: [{ name: "岡本 秀明" }],
+  creator: "Algion株式会社",
+  publisher: "Algion株式会社",
+  openGraph: {
+    title: "Algion株式会社",
+    description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
+    url: "https://algion.co.jp",
+    siteName: "Algion株式会社",
+    images: [
+      {
+        url: "/Algion_logo_512x512.png",
+        width: 512,
+        height: 512,
+        alt: "Algion株式会社ロゴ",
+      },
+    ],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Algion株式会社",
+    description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
+    images: ["/Algion_logo_512x512.png"],
+  },
   icons: {
     icon: '/Algion_logo_32x32.png',
     apple: '/Algion_logo_180x180.png',

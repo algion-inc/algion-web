@@ -85,6 +85,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               [&_a]:text-blue-600 [&_a]:no-underline hover:[&_a]:underline
               [&_code]:bg-gray-100 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-red-600 [&_code]:font-mono [&_code]:text-sm
               [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:text-gray-600 [&_blockquote]:italic
+              [&_table]:w-full [&_table]:my-6 [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300
+              [&_th]:bg-gray-50 [&_th]:text-gray-700 [&_th]:font-bold [&_th]:text-left [&_th]:px-4 [&_th]:py-3 [&_th]:border [&_th]:border-gray-300
+              [&_td]:text-gray-700 [&_td]:px-4 [&_td]:py-3 [&_td]:border [&_td]:border-gray-300
+              [&_td_a]:text-blue-600 [&_td_a]:no-underline hover:[&_td_a]:underline
+              [&_.company-info-table_thead]:hidden
             "
             dangerouslySetInnerHTML={{ __html: content }}
           />

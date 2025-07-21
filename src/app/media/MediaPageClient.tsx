@@ -43,21 +43,26 @@ export default function MediaPageClient({ articles }: MediaPageClientProps) {
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tab Navigation */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 sm:gap-4 mb-12 max-w-md sm:max-w-none mx-auto">
             {tabs.map((tab) => {
               const IconComponent = tab.icon;
               return (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  className={`flex items-center justify-center px-3 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 whitespace-nowrap ${
                     activeTab === tab.key
                       ? 'bg-black text-white shadow-elegant'
                       : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                   }`}
                 >
-                  <IconComponent size={20} className="mr-2" />
-                  {tab.label}
+                  <IconComponent size={16} className="mr-1 sm:mr-2 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="truncate">
+                    {tab.key === "All" ? "All" :
+                     tab.key === "導入事例" ? "導入事例" :
+                     tab.key === "技術解説" ? "技術解説" :
+                     tab.key === "お知らせ" ? "お知らせ" : tab.label}
+                  </span>
                 </button>
               );
             })}

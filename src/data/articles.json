@@ -1,36 +1,6 @@
 {
   "articles": [
     {
-      "id": 2,
-      "title": "サンプル記事タイトル",
-      "category": "導入事例",
-      "date": "2025年7月19日",
-      "rawDate": "2025-07-19T00:00:00.000Z",
-      "excerpt": "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。",
-      "slug": "sample-case-study",
-      "author": "岡本 秀明",
-      "tags": [
-        "サンプル",
-        "テンプレート"
-      ],
-      "featured": false
-    },
-    {
-      "id": 4,
-      "title": "サンプル記事タイトル",
-      "category": "お知らせ",
-      "date": "2025年7月15日",
-      "rawDate": "2025-07-15T00:00:00.000Z",
-      "excerpt": "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。",
-      "slug": "sample-news",
-      "author": "岡本 秀明",
-      "tags": [
-        "サンプル",
-        "テンプレート"
-      ],
-      "featured": false
-    },
-    {
       "id": 3,
       "title": "サンプル記事タイトル",
       "category": "技術解説",
@@ -59,15 +29,46 @@
         "テンプレート"
       ],
       "featured": false
-    }
-  ],
-  "latestByCategory": [
+    },
     {
       "id": 2,
       "title": "サンプル記事タイトル",
       "category": "導入事例",
-      "date": "2025年7月19日",
-      "rawDate": "2025-07-19T00:00:00.000Z",
+      "date": "2025年6月10日",
+      "rawDate": "2025-06-10T00:00:00.000Z",
+      "excerpt": "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。",
+      "slug": "sample-case-study",
+      "author": "岡本 秀明",
+      "tags": [
+        "サンプル",
+        "テンプレート"
+      ],
+      "featured": false
+    },
+    {
+      "id": 4,
+      "title": "Algion株式会社設立のお知らせ",
+      "category": "お知らせ",
+      "date": "2025年6月10日",
+      "rawDate": "2025-06-10T00:00:00.000Z",
+      "excerpt": "Algion株式会社は、法人向けAIソリューション、コンサルティング、SaaSプロダクトの提供を開始いたします。",
+      "slug": "algion-company-launch",
+      "author": "岡本 秀明",
+      "tags": [
+        "会社設立",
+        "AI",
+        "LLM"
+      ],
+      "featured": true
+    }
+  ],
+  "latestByCategory": [
+    {
+      "id": 1,
+      "title": "サンプル記事タイトル",
+      "category": "導入事例",
+      "date": "2025年7月5日",
+      "rawDate": "2025-07-05T00:00:00.000Z",
       "excerpt": "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。",
       "slug": "sample-case-study",
       "author": "岡本 秀明",
@@ -94,18 +95,19 @@
     },
     {
       "id": 4,
-      "title": "サンプル記事タイトル",
+      "title": "Algion株式会社設立のお知らせ",
       "category": "お知らせ",
-      "date": "2025年7月15日",
-      "rawDate": "2025-07-15T00:00:00.000Z",
-      "excerpt": "これはサンプル記事の概要です。実際の記事では、ここに記事の内容を簡潔にまとめた説明が入ります。",
-      "slug": "sample-news",
+      "date": "2025年6月10日",
+      "rawDate": "2025-06-10T00:00:00.000Z",
+      "excerpt": "Algion株式会社は、法人向けAIソリューション、コンサルティング、SaaSプロダクトの提供を開始いたします。",
+      "slug": "algion-company-launch",
       "author": "岡本 秀明",
       "tags": [
-        "サンプル",
-        "テンプレート"
+        "会社設立",
+        "AI",
+        "LLM"
       ],
-      "featured": false
+      "featured": true
     }
   ]
 }
