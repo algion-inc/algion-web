@@ -18,7 +18,7 @@ export default function AboutPage() {
             Algionについて
           </h1>
           <p className="text-xl lg:text-2xl text-gray-900 mb-8 max-w-4xl mx-auto">
-            テクノロジーの力で「あらゆる人々が創造と成長に時間を注げる社会」へ
+            テクノロジーを価値に変え、人々の創造と成長を加速させる
           </p>
         </div>
       </section>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               
               <p>2023年11月よりPayPay株式会社にSenior Software Engineer, Machine Learningとして参画。AIを活用したプロダクトの開発をはじめ、ローカルLLM/RAGやAIエージェントの開発を主導。</p>
               
-              <p>並行して、東京大学松尾研究室発の株式会社Almondoを含む複数のAIスタートアップにおいて、機械学習エンジニア、ソフトウェアエンジニア、プロジェクトマネージャーとして幅広く活動。</p>
+              <p>並行して、東京大学松尾研究室発の株式会社Almondoをはじめとする複数のAIスタートアップにおいて、機械学習エンジニア、ソフトウェアエンジニア、プロジェクトマネージャーとして幅広く活動。</p>
               
               <p>2025年6月にAlgion株式会社を設立し、代表取締役CEOに就任。法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを展開し、「あらゆる人々が創造と成長に時間を注げる社会」の実現を目指す。</p>
                 </div>
