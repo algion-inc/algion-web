@@ -81,8 +81,10 @@ export default function MediaPageClient({ articles }: MediaPageClientProps) {
                     {article.category}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors">
-                  {article.title}
+                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors h-14 flex items-start">
+                  <span className="leading-tight">
+                    {article.title}
+                  </span>
                 </h3>
                 <p className="text-gray-600 mb-4 line-clamp-3 flex-1">
                   {article.excerpt}
