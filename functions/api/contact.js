@@ -69,113 +69,187 @@ export async function onRequestPost(context) {
       });
     }
 
-    // メール本文のHTMLを生成（Webサイトデザインに合わせて）
+    // 超洗練されたメールテンプレート（大企業レベル）
     const inquiryHtml = `
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>お問い合わせ - Algion株式会社</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>新しいお問い合わせ | Algion</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #000000; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #eff6ff 100%);">
-  
-  <!-- Main Container -->
-  <div style="max-width: 680px; margin: 0 auto; background-color: #ffffff;">
-    
-    <!-- Header -->
-    <div style="background: linear-gradient(135deg, #000000 0%, #374151 100%); padding: 40px 32px; text-align: center; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: -50px; left: 20%; width: 150px; height: 150px; background: rgba(34, 197, 94, 0.1); border-radius: 50%; filter: blur(40px);"></div>
-      <div style="position: absolute; bottom: -50px; right: 20%; width: 150px; height: 150px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; filter: blur(40px);"></div>
-      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.025em; position: relative;">
-        新しいお問い合わせが届きました
-      </h1>
-      <p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.8); font-size: 16px; font-weight: 300; position: relative;">
-        Algion 公式サイトより
-      </p>
-    </div>
+<body style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
 
-    <!-- Content -->
-    <div style="padding: 48px 32px;">
+<!-- Preheader (hidden preview text) -->
+<div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #f8fafc;">${company} ${name}様からのお問い合わせです。内容: ${message.substring(0, 80)}...</div>
+
+<!-- Wrapper -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc;">
+  <tr>
+    <td align="center" style="padding: 40px 20px;">
       
-      <!-- Contact Info Card -->
-      <div style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 24px; padding: 32px; margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);">
-        <h2 style="margin: 0 0 24px 0; color: #000000; font-size: 24px; font-weight: 600; letter-spacing: -0.025em;">
-          お問い合わせ者情報
-        </h2>
+      <!-- Main Container -->
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);">
         
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; width: 140px; vertical-align: top;">
-              お名前
-            </td>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #000000; font-size: 16px;">
-              ${name}
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; vertical-align: top;">
-              メール
-            </td>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #2563eb; font-size: 16px;">
-              <a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; vertical-align: top;">
-              会社名
-            </td>
-            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #000000; font-size: 16px;">
-              ${company}
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 16px 0; font-weight: 600; color: #000000; vertical-align: top;">
-              部署・役職
-            </td>
-            <td style="padding: 16px 0; color: #000000; font-size: 16px;">
-              ${position}
-            </td>
-          </tr>
-        </table>
-      </div>
+        <!-- Header with Brand -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #000000 0%, #1f2937 50%, #374151 100%); padding: 0; position: relative; overflow: hidden;">
+            <!-- Decorative elements -->
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+              <tr>
+                <td style="position: relative; padding: 48px 40px; text-align: center;">
+                  <!-- Floating orbs effect -->
+                  <div style="position: absolute; top: -30px; left: 10%; width: 60px; height: 60px; background: rgba(34, 197, 94, 0.15); border-radius: 50%; filter: blur(20px);"></div>
+                  <div style="position: absolute; top: 20px; right: 15%; width: 80px; height: 80px; background: rgba(59, 130, 246, 0.15); border-radius: 50%; filter: blur(25px);"></div>
+                  <div style="position: absolute; bottom: -20px; left: 60%; width: 50px; height: 50px; background: rgba(236, 72, 153, 0.15); border-radius: 50%; filter: blur(15px);"></div>
+                  
+                  <!-- Logo/Brand -->
+                  <h1 style="margin: 0 0 8px 0; color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; position: relative; z-index: 1;">
+                    Algion
+                  </h1>
+                  <div style="width: 40px; height: 2px; background: linear-gradient(90deg, #22c55e, #3b82f6); margin: 0 auto 16px; border-radius: 2px;"></div>
+                  <p style="margin: 0; color: rgba(255, 255, 255, 0.85); font-size: 16px; font-weight: 400; position: relative; z-index: 1;">
+                    新しいお問い合わせが届きました
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
 
-      <!-- Message Card -->
-      <div style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 24px; padding: 32px; margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);">
-        <h3 style="margin: 0 0 20px 0; color: #000000; font-size: 20px; font-weight: 600; letter-spacing: -0.025em;">
-          お問い合わせ内容
-        </h3>
-        <div style="background-color: #f8fafc; border: 2px solid rgba(0, 0, 0, 0.1); border-radius: 16px; padding: 24px; white-space: pre-wrap; font-size: 16px; line-height: 1.6; color: #000000;">
+        <!-- Priority Badge -->
+        <tr>
+          <td style="padding: 0 40px; transform: translateY(-12px);">
+            <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; text-align: center; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+              🔥 高優先度
+            </div>
+          </td>
+        </tr>
+
+        <!-- Main Content -->
+        <tr>
+          <td style="padding: 20px 40px 40px;">
+            
+            <!-- Summary Card -->
+            <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 32px; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); opacity: 0.05; border-radius: 50%;"></div>
+              <h2 style="margin: 0 0 16px 0; color: #0f172a; font-size: 18px; font-weight: 700; display: flex; align-items: center;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 12px;"></span>
+                お問い合わせ概要
+              </h2>
+              <div style="display: grid; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">送信者</span>
+                  <span style="color: #0f172a; font-size: 16px; font-weight: 600;">${name}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">会社</span>
+                  <span style="color: #0f172a; font-size: 16px; font-weight: 600;">${company}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                  <span style="color: #64748b; font-size: 14px; font-weight: 500;">役職</span>
+                  <span style="color: #0f172a; font-size: 16px; font-weight: 600;">${position}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div style="background: #ffffff; border: 2px solid #f1f5f9; border-radius: 16px; padding: 28px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
+              <h3 style="margin: 0 0 20px 0; color: #0f172a; font-size: 16px; font-weight: 700; display: flex; align-items: center;">
+                <span style="display: inline-block; width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; margin-right: 10px;"></span>
+                連絡先情報
+              </h3>
+              <div style="background: #f8fafc; border-radius: 12px; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 16px; font-weight: 600;">
+                    📧
+                  </div>
+                  <div>
+                    <p style="margin: 0; color: #64748b; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">メールアドレス</p>
+                    <a href="mailto:${email}" style="color: #3b82f6; font-size: 16px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                      ${email}
+                      <span style="font-size: 12px;">↗</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div style="background: #ffffff; border: 2px solid #f1f5f9; border-radius: 16px; padding: 28px; margin-bottom: 32px;">
+              <h3 style="margin: 0 0 20px 0; color: #0f172a; font-size: 16px; font-weight: 700; display: flex; align-items: center;">
+                <span style="display: inline-block; width: 6px; height: 6px; background: #f59e0b; border-radius: 50%; margin-right: 10px;"></span>
+                お問い合わせ内容
+              </h3>
+              <div style="background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%); border: 1px solid #fbbf24; border-radius: 12px; padding: 20px; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: #f59e0b; opacity: 0.1; border-radius: 50%;"></div>
+                <p style="margin: 0; color: #92400e; font-size: 15px; line-height: 1.6; white-space: pre-wrap; font-weight: 500; position: relative;">
 ${message}
-        </div>
-      </div>
+                </p>
+              </div>
+            </div>
 
-      <!-- CTA -->
-      <div style="text-align: center; margin: 48px 0;">
-        <a href="mailto:${email}" style="display: inline-block; background: linear-gradient(135deg, #000000 0%, #374151 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s;">
-          返信する
-        </a>
-      </div>
+            <!-- Action Buttons -->
+            <div style="text-align: center; margin: 40px 0;">
+              <div style="display: inline-flex; gap: 16px; flex-wrap: wrap;">
+                <a href="mailto:${email}" style="background: linear-gradient(135deg, #000000 0%, #374151 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15); transition: all 0.2s;">
+                  <span>📧</span> 返信する
+                </a>
+                <a href="tel:${email.replace('@', '-').replace('.', '-')}" style="background: #ffffff; color: #374151; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid #e5e7eb; transition: all 0.2s;">
+                  <span>📞</span> 電話する
+                </a>
+              </div>
+            </div>
 
-    </div>
+          </td>
+        </tr>
 
-    <!-- Footer -->
-    <div style="background-color: #f8fafc; padding: 32px; text-align: center; border-top: 1px solid rgba(0, 0, 0, 0.1);">
-      <div style="margin-bottom: 16px;">
-        <h4 style="margin: 0; color: #000000; font-size: 18px; font-weight: 700; letter-spacing: -0.025em;">
-          Algion株式会社
-        </h4>
-      </div>
-      <p style="margin: 0; color: rgba(0, 0, 0, 0.6); font-size: 14px; line-height: 1.5;">
-        〒107-0062 東京都港区南青山3-1-36 青山丸竹ビル6F<br>
-        Email: <a href="mailto:info@algion.co.jp" style="color: #2563eb;">info@algion.co.jp</a>
-      </p>
-      <p style="margin: 16px 0 0 0; color: rgba(0, 0, 0, 0.4); font-size: 12px;">
-        このメールはAlgion公式サイトのお問い合わせフォームから自動送信されました。
-      </p>
-    </div>
+        <!-- Footer -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 32px 40px; border-top: 1px solid #e2e8f0;">
+            <div style="text-align: center;">
+              <!-- Company Info -->
+              <div style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 8px 0; color: #0f172a; font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">
+                  Algion株式会社
+                </h4>
+                <div style="width: 30px; height: 2px; background: linear-gradient(90deg, #22c55e, #3b82f6); margin: 0 auto 12px; border-radius: 2px;"></div>
+              </div>
+              
+              <!-- Address -->
+              <p style="margin: 0 0 16px 0; color: #64748b; font-size: 14px; line-height: 1.5; font-weight: 400;">
+                〒107-0062 東京都港区南青山3-1-36 青山丸竹ビル6F<br>
+                <a href="mailto:info@algion.co.jp" style="color: #3b82f6; text-decoration: none; font-weight: 500;">info@algion.co.jp</a>
+              </p>
+              
+              <!-- Automated notice -->
+              <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: 8px; padding: 12px; margin: 20px 0;">
+                <p style="margin: 0; color: #64748b; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  <span style="display: inline-block; width: 4px; height: 4px; background: #6366f1; border-radius: 50%;"></span>
+                  このメールはAlgion公式サイトから自動送信されました
+                  <span style="display: inline-block; width: 4px; height: 4px; background: #6366f1; border-radius: 50%;"></span>
+                </p>
+              </div>
+            </div>
+          </td>
+        </tr>
 
-  </div>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+
 </body>
 </html>`;
     
