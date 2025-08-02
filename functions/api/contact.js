@@ -210,8 +210,10 @@ async function sendGmail(env, mailOptions) {
 
   // メール送信
   const email = createEmailMessage(mailOptions);
-  // メール全体をbase64エンコード（URL-safe形式）
-  const base64Email = btoa(email)
+  // quoted-printableの場合はそのまま送信
+  const encoder = new TextEncoder();
+  const data = encoder.encode(email);
+  const base64Email = btoa(String.fromCharCode(...data))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
