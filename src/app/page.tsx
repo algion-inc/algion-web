@@ -700,43 +700,59 @@ const TransformerAttentionField = () => {
     
     // Static background renderer for mobile - completely fixed appearance
     const renderStaticBackground = () => {
-      // Clear canvas with solid background
-      ctx.fillStyle = 'rgba(5, 8, 16, 1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw static network connections
-      drawNetworkConnections();
-      
-      // Draw static nodes with completely fixed appearance
-      nodesRef.current.forEach((node) => {
-        const size = node.baseSize * 0.75; // Fixed size calculation
-        const baseAlpha = 0.08; // Fixed opacity
+      try {
+        if (!ctx || !canvas) {
+          console.error('Canvas context not available');
+          return;
+        }
         
-        // Fixed color scheme
-        const hue = 200; // Fixed blue hue
-        const saturation = 70; // Fixed saturation
+        // Clear canvas with solid background
+        ctx.fillStyle = 'rgba(5, 8, 16, 1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Main node with static gradient
-        ctx.beginPath();
-        const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 2.2);
-        nodeGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 75%, ${baseAlpha})`);
-        nodeGradient.addColorStop(0.5, `hsla(${hue}, ${saturation}%, 65%, ${baseAlpha * 0.5})`);
-        nodeGradient.addColorStop(0.8, `hsla(${hue}, ${saturation}%, 55%, ${baseAlpha * 0.2})`);
-        nodeGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 45%, 0)`);
-        ctx.fillStyle = nodeGradient;
-        ctx.arc(node.x, node.y, size * 2.2, 0, Math.PI * 2);
-        ctx.fill();
+        if (nodesRef.current.length === 0) {
+          console.warn('No nodes available for rendering');
+          return;
+        }
         
-        // Static core
-        ctx.beginPath();
-        const coreGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 0.9);
-        coreGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 88%, ${baseAlpha * 0.9})`);
-        coreGradient.addColorStop(0.7, `hsla(${hue}, ${saturation}%, 82%, ${baseAlpha * 0.6})`);
-        coreGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 76%, ${baseAlpha * 0.3})`);
-        ctx.fillStyle = coreGradient;
-        ctx.arc(node.x, node.y, size * 0.9, 0, Math.PI * 2);
-        ctx.fill();
-      });
+        // Draw static network connections
+        drawNetworkConnections();
+        
+        // Draw static nodes with completely fixed appearance
+        nodesRef.current.forEach((node) => {
+          const size = node.baseSize * 0.75; // Fixed size calculation
+          const baseAlpha = 0.08; // Fixed opacity
+          
+          // Fixed color scheme
+          const hue = 200; // Fixed blue hue
+          const saturation = 70; // Fixed saturation
+          
+          // Main node with static gradient
+          ctx.beginPath();
+          const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 2.2);
+          nodeGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 75%, ${baseAlpha})`);
+          nodeGradient.addColorStop(0.5, `hsla(${hue}, ${saturation}%, 65%, ${baseAlpha * 0.5})`);
+          nodeGradient.addColorStop(0.8, `hsla(${hue}, ${saturation}%, 55%, ${baseAlpha * 0.2})`);
+          nodeGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 45%, 0)`);
+          ctx.fillStyle = nodeGradient;
+          ctx.arc(node.x, node.y, size * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Static core
+          ctx.beginPath();
+          const coreGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 0.9);
+          coreGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 88%, ${baseAlpha * 0.9})`);
+          coreGradient.addColorStop(0.7, `hsla(${hue}, ${saturation}%, 82%, ${baseAlpha * 0.6})`);
+          coreGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 76%, ${baseAlpha * 0.3})`);
+          ctx.fillStyle = coreGradient;
+          ctx.arc(node.x, node.y, size * 0.9, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        
+        console.log('Static background rendered with', nodesRef.current.length, 'nodes');
+      } catch (error) {
+        console.error('Error rendering static background:', error);
+      }
     };
     
     
@@ -897,31 +913,30 @@ const TransformerAttentionField = () => {
       height = canvas.height = window.innerHeight;
       updateMobileStatus(); // Update mobile status when resizing
       
-      // Clear any previous rendering state
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Reinitialize network on resize to ensure complete coverage
-      initAttentionField().then(() => {
+      // Don't reinitialize on resize to prevent flickering
+      // Just redraw with existing nodes if they exist
+      if (nodesRef.current.length > 0) {
         if (isMobile()) {
           renderStaticBackground();
-        } else {
-          // Restart animation if not already running
-          if (!animationIdRef.current) {
-            animate();
-          }
         }
-      });
+      }
     };
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
     // Initialize animation - different approach for mobile vs desktop
-    const startVisualization = () => {
-      initAttentionField().then(() => {
+    const startVisualization = async () => {
+      try {
+        await initAttentionField();
+        
+        // Force a small delay to ensure everything is ready
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         if (isMobile()) {
           // Mobile: Create static display only, no animation loop
           renderStaticBackground();
+          console.log('Mobile static background rendered');
         } else {
           // Desktop: Full animation - ensure fresh start
           if (animationIdRef.current) {
@@ -930,7 +945,9 @@ const TransformerAttentionField = () => {
           }
           animate();
         }
-      });
+      } catch (error) {
+        console.error('Visualization initialization failed:', error);
+      }
     };
     
     startVisualization();
