@@ -159,40 +159,58 @@ const TransformerAttentionField = () => {
     
     const createInitialNodes = async (count: number) => {
       const types: AttentionNodeType['semanticType'][] = ['query', 'key', 'value', 'output'];
-      const screenArea = width * height;
-      const minDistance = Math.sqrt(screenArea / count) * 0.8; // Looser packing for initial
       
-      // Create first node
-      nodesRef.current.push(createAttentionNode(0, Math.random() * width, Math.random() * height, types));
-      
-      for (let i = 1; i < count; i++) {
-        let placed = false;
-        let attempts = 0;
-        const maxAttempts = 15; // Reduced attempts for speed
+      if (isMobile()) {
+        // Mobile: Fixed grid pattern for consistency
+        const cols = Math.ceil(Math.sqrt(count * (width / height)));
+        const rows = Math.ceil(count / cols);
+        const xSpacing = width / (cols + 1);
+        const ySpacing = height / (rows + 1);
         
-        while (!placed && attempts < maxAttempts) {
-          const x = Math.random() * width;
-          const y = Math.random() * height;
+        for (let i = 0; i < count; i++) {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const x = xSpacing * (col + 1);
+          const y = ySpacing * (row + 1);
           
-          let validPosition = true;
-          for (const existingNode of nodesRef.current) {
-            const distSq = (x - existingNode.x) ** 2 + (y - existingNode.y) ** 2; // No sqrt for speed
-            if (distSq < minDistance * minDistance) {
-              validPosition = false;
-              break;
-            }
-          }
-          
-          if (validPosition) {
-            nodesRef.current.push(createAttentionNode(i, x, y, types));
-            placed = true;
-          }
-          attempts++;
+          nodesRef.current.push(createAttentionNode(i, x, y, types));
         }
+      } else {
+        // Desktop: Random placement with collision detection
+        const screenArea = width * height;
+        const minDistance = Math.sqrt(screenArea / count) * 0.8;
         
-        if (!placed) {
-          // Fallback: place anywhere if can't find valid position
-          nodesRef.current.push(createAttentionNode(i, Math.random() * width, Math.random() * height, types));
+        // Create first node
+        nodesRef.current.push(createAttentionNode(0, Math.random() * width, Math.random() * height, types));
+        
+        for (let i = 1; i < count; i++) {
+          let placed = false;
+          let attempts = 0;
+          const maxAttempts = 15;
+          
+          while (!placed && attempts < maxAttempts) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            
+            let validPosition = true;
+            for (const existingNode of nodesRef.current) {
+              const distSq = (x - existingNode.x) ** 2 + (y - existingNode.y) ** 2;
+              if (distSq < minDistance * minDistance) {
+                validPosition = false;
+                break;
+              }
+            }
+            
+            if (validPosition) {
+              nodesRef.current.push(createAttentionNode(i, x, y, types));
+              placed = true;
+            }
+            attempts++;
+          }
+          
+          if (!placed) {
+            nodesRef.current.push(createAttentionNode(i, Math.random() * width, Math.random() * height, types));
+          }
         }
       }
       
@@ -200,6 +218,11 @@ const TransformerAttentionField = () => {
     };
     
     const progressivelyAddNodes = async (remainingCount: number) => {
+      if (isMobile()) {
+        // Mobile: Skip progressive addition, all nodes were created in initial batch
+        return;
+      }
+      
       const batchSize = 15; // Gradual node addition in small batches
       const types: AttentionNodeType['semanticType'][] = ['query', 'key', 'value', 'output'];
       
@@ -224,28 +247,60 @@ const TransformerAttentionField = () => {
       }
     };
     
+    // Seeded random for consistent positioning on mobile
+    const seededRandom = (seed: number) => {
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    };
+    
     const createAttentionNode = (id: number, x: number, y: number, types: AttentionNodeType['semanticType'][]): AttentionNodeType => {
-      const semanticType = types[Math.floor(Math.random() * types.length)];
-      const importance = Math.random() * 0.7 + 0.3;
-      const headId = Math.floor(Math.random() * 8); // 8 attention heads
-      
-      return {
-        id,
-        x,
-        y,
-        z: 50 + Math.random() * 50,
-        baseSize: (1.0 + importance * 1.5 + Math.random() * 0.5) * 1.5, // Balanced size for visibility
-        importance,
-        activationLevel: 0.1 + Math.random() * 0.3,
-        attentionScore: 0,
-        pulsePhase: Math.random() * Math.PI * 2,
-        bloomIntensity: 0,
-        bloomDecay: 0,
-        lastActivation: 0,
-        neighbors: [],
-        semanticType,
-        headId
-      };
+      if (isMobile()) {
+        // Fixed values for mobile - no randomness
+        const semanticType = types[id % types.length];
+        const importance = 0.5 + (id % 3) * 0.2; // 0.5, 0.7, 0.9 rotation
+        const headId = id % 8;
+        
+        return {
+          id,
+          x,
+          y,
+          z: 75, // Fixed depth
+          baseSize: 2.0 + (id % 3) * 0.5, // Fixed sizes: 2.0, 2.5, 3.0
+          importance,
+          activationLevel: 0.2,
+          attentionScore: 0,
+          pulsePhase: (id % 4) * Math.PI / 2, // Fixed phase rotation
+          bloomIntensity: 0,
+          bloomDecay: 0,
+          lastActivation: 0,
+          neighbors: [],
+          semanticType,
+          headId
+        };
+      } else {
+        // Desktop: keep random for variety
+        const semanticType = types[Math.floor(Math.random() * types.length)];
+        const importance = Math.random() * 0.7 + 0.3;
+        const headId = Math.floor(Math.random() * 8);
+        
+        return {
+          id,
+          x,
+          y,
+          z: 50 + Math.random() * 50,
+          baseSize: (1.0 + importance * 1.5 + Math.random() * 0.5) * 1.5,
+          importance,
+          activationLevel: 0.1 + Math.random() * 0.3,
+          attentionScore: 0,
+          pulsePhase: Math.random() * Math.PI * 2,
+          bloomIntensity: 0,
+          bloomDecay: 0,
+          lastActivation: 0,
+          neighbors: [],
+          semanticType,
+          headId
+        };
+      }
     };
     
     const buildOptimizedNeighborhoods = () => {
@@ -648,7 +703,7 @@ const TransformerAttentionField = () => {
       animationIdRef.current = requestAnimationFrame(animate);
     };
     
-    // Static background renderer for mobile
+    // Static background renderer for mobile - completely fixed appearance
     const renderStaticBackground = () => {
       // Clear canvas with solid background
       ctx.fillStyle = 'rgba(5, 8, 16, 1)';
@@ -657,24 +712,22 @@ const TransformerAttentionField = () => {
       // Draw static network connections
       drawNetworkConnections();
       
-      // Draw static nodes with fixed appearance
+      // Draw static nodes with completely fixed appearance
       nodesRef.current.forEach((node) => {
-        const size = node.baseSize * (node.z / 100);
-        const baseAlpha = Math.max(0.03, node.importance * 0.1); // Reduced opacity for mobile
+        const size = node.baseSize * 0.75; // Fixed size calculation
+        const baseAlpha = 0.08; // Fixed opacity
         
-        // Static color based on semantic type
-        const semanticHue = getSemanticColor(node.semanticType, node.semanticType);
-        const headHue = getMultiHeadColor(node.headId);
-        const hue = (semanticHue * 0.75 + headHue * 0.25);
-        const saturation = 70 + node.importance * 12;
+        // Fixed color scheme
+        const hue = 200; // Fixed blue hue
+        const saturation = 70; // Fixed saturation
         
         // Main node with static gradient
         ctx.beginPath();
         const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 2.2);
         nodeGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 75%, ${baseAlpha})`);
-        nodeGradient.addColorStop(0.5, `hsla(${hue + 8}, ${saturation - 8}%, 65%, ${baseAlpha * 0.5})`);
-        nodeGradient.addColorStop(0.8, `hsla(${hue + 15}, ${saturation - 15}%, 55%, ${baseAlpha * 0.2})`);
-        nodeGradient.addColorStop(1, `hsla(${hue + 22}, ${saturation - 22}%, 45%, 0)`);
+        nodeGradient.addColorStop(0.5, `hsla(${hue}, ${saturation}%, 65%, ${baseAlpha * 0.5})`);
+        nodeGradient.addColorStop(0.8, `hsla(${hue}, ${saturation}%, 55%, ${baseAlpha * 0.2})`);
+        nodeGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 45%, 0)`);
         ctx.fillStyle = nodeGradient;
         ctx.arc(node.x, node.y, size * 2.2, 0, Math.PI * 2);
         ctx.fill();
@@ -682,9 +735,9 @@ const TransformerAttentionField = () => {
         // Static core
         ctx.beginPath();
         const coreGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 0.9);
-        coreGradient.addColorStop(0, `hsla(${hue}, ${saturation + 12}%, 88%, ${baseAlpha * 0.9})`);
-        coreGradient.addColorStop(0.7, `hsla(${hue + 5}, ${saturation + 8}%, 82%, ${baseAlpha * 0.6})`);
-        coreGradient.addColorStop(1, `hsla(${hue + 10}, ${saturation + 4}%, 76%, ${baseAlpha * 0.3})`);
+        coreGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 88%, ${baseAlpha * 0.9})`);
+        coreGradient.addColorStop(0.7, `hsla(${hue}, ${saturation}%, 82%, ${baseAlpha * 0.6})`);
+        coreGradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 76%, ${baseAlpha * 0.3})`);
         ctx.fillStyle = coreGradient;
         ctx.arc(node.x, node.y, size * 0.9, 0, Math.PI * 2);
         ctx.fill();
