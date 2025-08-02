@@ -88,8 +88,8 @@ export async function onRequestPost(context) {
         
         <!-- Header -->
         <tr>
-          <td style="padding: 40px 0; text-align: center; background-color: #000000; color: #ffffff;">
-            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold; letter-spacing: -0.025em;">
+          <td style="padding: 40px 0; text-align: center; border-bottom: 1px solid #eee;">
+            <h1 style="margin: 0; color: #000000; font-size: 24px; font-weight: normal;">
               Algion
             </h1>
           </td>
