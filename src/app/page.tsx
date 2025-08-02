@@ -642,6 +642,97 @@ const TransformerAttentionField = () => {
       animationIdRef.current = requestAnimationFrame(animate);
     };
     
+    // Static frame renderer for mobile
+    const renderStaticFrame = () => {
+      // Ensure complete black background coverage
+      ctx.fillStyle = 'rgba(5, 8, 16, 1)'; // Solid dark background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw static ambient connections
+      ctx.globalAlpha = 0.05;
+      drawStaticConnections();
+      ctx.globalAlpha = 1;
+      
+      // Draw static nodes
+      nodesRef.current.forEach(node => {
+        drawStaticNode(node);
+      });
+      
+      // Draw a few static flows for visual interest
+      drawStaticFlows();
+    };
+    
+    const drawStaticConnections = () => {
+      // Similar to drawAmbientConnections but static
+      const connectionSubset = Math.floor(nodesRef.current.length * 0.8);
+      for (let i = 0; i < connectionSubset; i++) {
+        const sourceNode = nodesRef.current[i % nodesRef.current.length];
+        const targetIndex = (i + 3) % nodesRef.current.length;
+        const targetNode = nodesRef.current[targetIndex];
+        
+        if (sourceNode && targetNode) {
+          const distance = Math.sqrt(
+            Math.pow(targetNode.x - sourceNode.x, 2) + 
+            Math.pow(targetNode.y - sourceNode.y, 2)
+          );
+          
+          if (distance < 200) {
+            ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 * (200 - distance) / 200})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(sourceNode.x, sourceNode.y);
+            ctx.lineTo(targetNode.x, targetNode.y);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+    
+    const drawStaticNode = (node: AttentionNodeType) => {
+      const size = node.baseSize * 0.7;
+      const alpha = 0.6;
+      
+      // Core node
+      ctx.fillStyle = `rgba(59, 130, 246, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Subtle glow
+      const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 3);
+      gradient.addColorStop(0, `rgba(59, 130, 246, ${alpha * 0.3})`);
+      gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, size * 3, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    
+    const drawStaticFlows = () => {
+      // Draw a few elegant static flow lines
+      for (let i = 0; i < 3; i++) {
+        const sourceNode = nodesRef.current[i * 5 % nodesRef.current.length];
+        const targetNode = nodesRef.current[(i * 7 + 3) % nodesRef.current.length];
+        
+        if (sourceNode && targetNode) {
+          const gradient = ctx.createLinearGradient(
+            sourceNode.x, sourceNode.y,
+            targetNode.x, targetNode.y
+          );
+          gradient.addColorStop(0, 'rgba(34, 197, 94, 0.6)');
+          gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.8)');
+          gradient.addColorStop(1, 'rgba(34, 197, 94, 0.6)');
+          
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(sourceNode.x, sourceNode.y);
+          ctx.lineTo(targetNode.x, targetNode.y);
+          ctx.stroke();
+        }
+      }
+    };
+    
     const drawAmbientConnections = () => {
       // Dense ambient particle-like connections
       const connectionSubset = Math.floor(nodesRef.current.length * 1.2);
@@ -803,7 +894,16 @@ const TransformerAttentionField = () => {
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    animate();
+    
+    if (isMobile()) {
+      // Mobile: Render static frame only
+      initAttentionField().then(() => {
+        renderStaticFrame();
+      });
+    } else {
+      // Desktop: Full animation
+      animate();
+    }
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -836,11 +936,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Desktop: Transformer Animation, Mobile: Static Gradient */}
-        <div className="hidden lg:block">
-          <TransformerAttentionField />
-        </div>
-        <div className="block lg:hidden absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
+        {/* Transformer Attention Field Canvas Background */}
+        <TransformerAttentionField />
         
         {/* Main Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex-1 flex flex-col justify-center">
