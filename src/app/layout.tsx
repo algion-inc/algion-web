@@ -63,6 +63,16 @@ export default function RootLayout({
         className={`${inter.variable} ${notoSansJP.variable} font-sans antialiased`}
         suppressHydrationWarning={true}
       >
+        {/* Polyfill for requestIdleCallback */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+if(typeof window !== 'undefined' && !('requestIdleCallback' in window)){
+  window.requestIdleCallback = function(cb){ return setTimeout(()=>cb({ timeRemaining: ()=>0 }), 1); };
+  window.cancelIdleCallback = function(id){ clearTimeout(id); };
+}
+`           }}
+        />
         <Header />
         <main className="pt-20 sm:pt-24">
           {children}
