@@ -247,11 +247,6 @@ const TransformerAttentionField = () => {
       }
     };
     
-    // Seeded random for consistent positioning on mobile
-    const seededRandom = (seed: number) => {
-      const x = Math.sin(seed) * 10000;
-      return x - Math.floor(x);
-    };
     
     const createAttentionNode = (id: number, x: number, y: number, types: AttentionNodeType['semanticType'][]): AttentionNodeType => {
       if (isMobile()) {
