@@ -171,6 +171,14 @@ async function sendGmail(env, mailOptions) {
 
   // メール送信
   const email = createEmailMessage(mailOptions);
+  // UTF-8文字列を安全にbase64エンコード
+  const encoder = new TextEncoder();
+  const data = encoder.encode(email);
+  const base64Email = btoa(String.fromCharCode(...data))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+    
   const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
     method: 'POST',
     headers: {
@@ -178,7 +186,7 @@ async function sendGmail(env, mailOptions) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      raw: btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
+      raw: base64Email,
     }),
   });
 
@@ -193,6 +201,11 @@ async function sendGmail(env, mailOptions) {
 function createEmailMessage({ to, from, replyTo, subject, html }) {
   const boundary = '----=_Part_' + Math.random().toString(36).substr(2, 9);
   
+  // UTF-8文字列を安全にbase64エンコード
+  const encoder = new TextEncoder();
+  const data = encoder.encode(html);
+  const base64Html = btoa(String.fromCharCode(...data));
+  
   let message = [
     `To: ${to}`,
     `From: ${from}`,
@@ -205,7 +218,7 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     'Content-Type: text/html; charset=utf-8',
     'Content-Transfer-Encoding: base64',
     '',
-    btoa(unescape(encodeURIComponent(html))),
+    base64Html,
     `--${boundary}--`
   ].filter(line => line !== '').join('\r\n');
 
