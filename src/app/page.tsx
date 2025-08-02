@@ -168,7 +168,7 @@ const TransformerAttentionField = () => {
       const margin = 50;
       
       for (let i = 0; i < count; i++) {
-        let x, y;
+        let x: number, y: number;
         
         if (isMobile()) {
           // Mobile: Deterministic placement that looks random
@@ -184,25 +184,28 @@ const TransformerAttentionField = () => {
             let placed = false;
             let attempts = 0;
             
+            // Default values in case placement fails
+            x = Math.random() * width;
+            y = Math.random() * height;
+            
             while (!placed && attempts < 15) {
-              x = Math.random() * width;
-              y = Math.random() * height;
+              const tempX = Math.random() * width;
+              const tempY = Math.random() * height;
               
               let validPosition = true;
               for (const node of nodesRef.current) {
-                if ((x - node.x) ** 2 + (y - node.y) ** 2 < minDistance ** 2) {
+                if ((tempX - node.x) ** 2 + (tempY - node.y) ** 2 < minDistance ** 2) {
                   validPosition = false;
                   break;
                 }
               }
               
-              if (validPosition) placed = true;
+              if (validPosition) {
+                x = tempX;
+                y = tempY;
+                placed = true;
+              }
               attempts++;
-            }
-            
-            if (!placed) {
-              x = Math.random() * width;
-              y = Math.random() * height;
             }
           }
         }
