@@ -167,17 +167,20 @@ const TransformerAttentionField = () => {
       const types: AttentionNodeType['semanticType'][] = ['query', 'key', 'value', 'output'];
       
       if (isMobile()) {
-        // Mobile: Fixed grid pattern for consistency
-        const cols = Math.ceil(Math.sqrt(count * (width / height)));
-        const rows = Math.ceil(count / cols);
-        const xSpacing = width / (cols + 1);
-        const ySpacing = height / (rows + 1);
-        
+        // Mobile: Pseudo-random but deterministic placement
         for (let i = 0; i < count; i++) {
-          const col = i % cols;
-          const row = Math.floor(i / cols);
-          const x = xSpacing * (col + 1);
-          const y = ySpacing * (row + 1);
+          // Use deterministic "random" based on index for consistent placement
+          const seed1 = i * 12345;
+          const seed2 = i * 67890;
+          
+          // Generate pseudo-random coordinates that look natural
+          const pseudoX = ((seed1 * 9301 + 49297) % 233280) / 233280.0;
+          const pseudoY = ((seed2 * 9301 + 49297) % 233280) / 233280.0;
+          
+          // Add some margin from edges
+          const margin = 50;
+          const x = margin + pseudoX * (width - 2 * margin);
+          const y = margin + pseudoY * (height - 2 * margin);
           
           nodesRef.current.push(createAttentionNode(i, x, y, types));
         }
@@ -256,21 +259,29 @@ const TransformerAttentionField = () => {
     
     const createAttentionNode = (id: number, x: number, y: number, types: AttentionNodeType['semanticType'][]): AttentionNodeType => {
       if (isMobile()) {
-        // Fixed values for mobile - no randomness
-        const semanticType = types[id % types.length];
-        const importance = 0.5 + (id % 3) * 0.2; // 0.5, 0.7, 0.9 rotation
-        const headId = id % 8;
+        // Pseudo-random values for mobile - deterministic but varied
+        const seed = id * 7919; // Prime number for better distribution
+        
+        const pseudoRandom1 = ((seed * 9301 + 49297) % 233280) / 233280.0;
+        const pseudoRandom2 = (((seed + 1) * 9301 + 49297) % 233280) / 233280.0;
+        const pseudoRandom3 = (((seed + 2) * 9301 + 49297) % 233280) / 233280.0;
+        const pseudoRandom4 = (((seed + 3) * 9301 + 49297) % 233280) / 233280.0;
+        const pseudoRandom5 = (((seed + 4) * 9301 + 49297) % 233280) / 233280.0;
+        
+        const semanticType = types[Math.floor(pseudoRandom1 * types.length)];
+        const importance = 0.3 + pseudoRandom2 * 0.7; // 0.3-1.0 range
+        const headId = Math.floor(pseudoRandom3 * 8);
         
         return {
           id,
           x,
           y,
-          z: 75, // Fixed depth
-          baseSize: 2.0 + (id % 3) * 0.5, // Fixed sizes: 2.0, 2.5, 3.0
+          z: 50 + pseudoRandom4 * 50, // 50-100 range like desktop
+          baseSize: (1.0 + importance * 1.5 + pseudoRandom5 * 0.5) * 1.5,
           importance,
-          activationLevel: 0.2,
+          activationLevel: 0.1 + pseudoRandom2 * 0.3,
           attentionScore: 0,
-          pulsePhase: (id % 4) * Math.PI / 2, // Fixed phase rotation
+          pulsePhase: pseudoRandom3 * Math.PI * 2,
           bloomIntensity: 0,
           bloomDecay: 0,
           lastActivation: 0,
@@ -724,14 +735,16 @@ const TransformerAttentionField = () => {
         // Draw dense static network connections for mobile
         drawStaticNetworkConnections();
         
-        // Draw static nodes with completely fixed appearance
+        // Draw static nodes with varied appearance like desktop
         nodesRef.current.forEach((node) => {
-          const size = node.baseSize * 0.75; // Fixed size calculation
-          const baseAlpha = 0.08; // Fixed opacity
+          const size = node.baseSize * (node.z / 100); // Use original size calculation
+          const baseAlpha = Math.max(0.06, node.importance * 0.2) * 0.5; // Reduced for mobile but varied
           
-          // Fixed color scheme
-          const hue = 200; // Fixed blue hue
-          const saturation = 70; // Fixed saturation
+          // Use semantic colors like desktop
+          const semanticHue = getSemanticColor(node.semanticType, node.semanticType);
+          const headHue = getMultiHeadColor(node.headId);
+          const hue = (semanticHue * 0.75 + headHue * 0.25);
+          const saturation = 70 + node.importance * 12;
           
           // Main node with static gradient
           ctx.beginPath();
@@ -1029,14 +1042,17 @@ const TransformerAttentionField = () => {
     };
     
     const resizeCanvas = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      updateMobileStatus(); // Update mobile status when resizing
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
       
-      // Don't reinitialize on resize to prevent flickering
-      // Just redraw with existing nodes if they exist
-      if (nodesRef.current.length > 0) {
-        if (isMobile()) {
+      // Only resize if dimensions actually changed (prevents scroll-triggered resizes)
+      if (newWidth !== width || newHeight !== height) {
+        width = canvas.width = newWidth;
+        height = canvas.height = newHeight;
+        updateMobileStatus();
+        
+        // For mobile, only redraw if nodes exist
+        if (isMobile() && nodesRef.current.length > 0) {
           renderStaticBackground();
         }
       }
