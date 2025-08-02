@@ -63,12 +63,6 @@ const TransformerAttentionField = () => {
   const animationStartTime = useRef<number>(Date.now());
   const pausedTime = useRef<number>(0);
   
-  // Seeded random for reproducible animations
-  const seededRandom = (seed: number): number => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-  };
-  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
