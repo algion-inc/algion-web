@@ -63,6 +63,12 @@ const TransformerAttentionField = () => {
   const animationStartTime = useRef<number>(Date.now());
   const pausedTime = useRef<number>(0);
   
+  // Seeded random for reproducible animations
+  const seededRandom = (seed: number): number => {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  };
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -836,8 +842,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Transformer Attention Field Canvas Background */}
-        <TransformerAttentionField />
+        {/* Desktop: Transformer Animation, Mobile: Static Gradient */}
+        <div className="hidden lg:block">
+          <TransformerAttentionField />
+        </div>
+        <div className="block lg:hidden absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
         
         {/* Main Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex-1 flex flex-col justify-center">
