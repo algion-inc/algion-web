@@ -955,26 +955,26 @@ const TransformerAttentionField = () => {
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
       
-      // Only resize if dimensions actually changed (prevents scroll-triggered resizes)
-      if (newWidth !== width || newHeight !== height) {
+      // Only resize if dimensions actually changed significantly (prevents scroll-triggered resizes)
+      if (Math.abs(newWidth - width) > 10 || Math.abs(newHeight - height) > 10) {
         width = canvas.width = newWidth;
         height = canvas.height = newHeight;
         updateMobileStatus();
         
-        // For mobile, completely avoid any redrawing during resize to prevent distortion
-        if (isMobile()) {
-          // Do nothing - keep the existing static background to prevent distortion
-          return;
+        // For mobile, only redraw if nodes exist but avoid frequent redrawing
+        if (isMobile() && nodesRef.current.length > 0) {
+          // Use a timeout to debounce rapid resize events
+          setTimeout(() => {
+            if (canvas && ctx) {
+              renderStaticBackground();
+            }
+          }, 100);
         }
       }
     };
     
     resizeCanvas();
-    
-    // Only add resize listener for desktop to prevent mobile scroll issues
-    if (!isMobile()) {
-      window.addEventListener('resize', resizeCanvas);
-    }
+    window.addEventListener('resize', resizeCanvas);
     
     // Initialize animation - different approach for mobile vs desktop
     const startVisualization = async () => {
@@ -1005,10 +1005,7 @@ const TransformerAttentionField = () => {
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      // Only remove resize listener if it was added (desktop only)
-      if (!isMobile()) {
-        window.removeEventListener('resize', resizeCanvas);
-      }
+      window.removeEventListener('resize', resizeCanvas);
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
@@ -1025,9 +1022,9 @@ const TransformerAttentionField = () => {
         height: '100vh',
         left: '0',
         top: '0',
-        position: 'fixed', // Use fixed positioning to prevent scroll interference
+        position: 'absolute', // Back to absolute positioning
         display: 'block',
-        zIndex: '-1' // Ensure it stays behind content
+        zIndex: '1' // Positive z-index but behind other content
       }}
     />
   );
