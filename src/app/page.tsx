@@ -644,6 +644,49 @@ const TransformerAttentionField = () => {
       animationIdRef.current = requestAnimationFrame(animate);
     };
     
+    // Static background renderer for mobile
+    const renderStaticBackground = () => {
+      // Clear canvas with solid background
+      ctx.fillStyle = 'rgba(5, 8, 16, 1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw static network connections
+      drawNetworkConnections();
+      
+      // Draw static nodes with fixed appearance
+      nodesRef.current.forEach((node) => {
+        const size = node.baseSize * (node.z / 100);
+        const baseAlpha = Math.max(0.03, node.importance * 0.1); // Reduced opacity for mobile
+        
+        // Static color based on semantic type
+        const semanticHue = getSemanticColor(node.semanticType, node.semanticType);
+        const headHue = getMultiHeadColor(node.headId);
+        const hue = (semanticHue * 0.75 + headHue * 0.25);
+        const saturation = 70 + node.importance * 12;
+        
+        // Main node with static gradient
+        ctx.beginPath();
+        const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 2.2);
+        nodeGradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 75%, ${baseAlpha})`);
+        nodeGradient.addColorStop(0.5, `hsla(${hue + 8}, ${saturation - 8}%, 65%, ${baseAlpha * 0.5})`);
+        nodeGradient.addColorStop(0.8, `hsla(${hue + 15}, ${saturation - 15}%, 55%, ${baseAlpha * 0.2})`);
+        nodeGradient.addColorStop(1, `hsla(${hue + 22}, ${saturation - 22}%, 45%, 0)`);
+        ctx.fillStyle = nodeGradient;
+        ctx.arc(node.x, node.y, size * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Static core
+        ctx.beginPath();
+        const coreGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 0.9);
+        coreGradient.addColorStop(0, `hsla(${hue}, ${saturation + 12}%, 88%, ${baseAlpha * 0.9})`);
+        coreGradient.addColorStop(0.7, `hsla(${hue + 5}, ${saturation + 8}%, 82%, ${baseAlpha * 0.6})`);
+        coreGradient.addColorStop(1, `hsla(${hue + 10}, ${saturation + 4}%, 76%, ${baseAlpha * 0.3})`);
+        ctx.fillStyle = coreGradient;
+        ctx.arc(node.x, node.y, size * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+    
     
     const drawAmbientConnections = () => {
       // Dense ambient particle-like connections
@@ -807,10 +850,18 @@ const TransformerAttentionField = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Initialize and start animation (same for all devices)
-    initAttentionField().then(() => {
-      animate();
-    });
+    // Initialize animation - different approach for mobile vs desktop
+    if (isMobile()) {
+      // Mobile: Create static display only, no animation loop
+      initAttentionField().then(() => {
+        renderStaticBackground();
+      });
+    } else {
+      // Desktop: Full animation
+      initAttentionField().then(() => {
+        animate();
+      });
+    }
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
