@@ -1032,9 +1032,12 @@ const TransformerAttentionField = () => {
       className="absolute inset-0 w-full h-full"
       style={{ 
         background: 'linear-gradient(135deg, #050810 0%, #0f1419 30%, #1a1f2e 50%, #0f1419 70%, #050810 100%)',
+        position: 'fixed',
         width: '100vw',
-        left: '50%',
-        transform: 'translateX(-50%)'
+        height: '100vh',
+        left: '0',
+        top: '0',
+        zIndex: '-1'
       }}
     />
   );
