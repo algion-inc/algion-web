@@ -960,6 +960,14 @@ const TransformerAttentionField = () => {
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
       
+      // Initialize width/height if not set
+      if (!width || !height) {
+        width = canvas.width = newWidth;
+        height = canvas.height = newHeight;
+        updateMobileStatus();
+        return;
+      }
+      
       // Only resize if dimensions actually changed significantly (prevents scroll-triggered resizes)
       if (Math.abs(newWidth - width) > 10 || Math.abs(newHeight - height) > 10) {
         width = canvas.width = newWidth;
