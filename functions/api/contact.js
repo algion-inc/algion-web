@@ -191,7 +191,9 @@ async function sendGmail(env, mailOptions) {
   });
 
   if (!response.ok) {
-    throw new Error(`Gmail API error: ${response.status}`);
+    const errorData = await response.json();
+    console.error('Gmail API error details:', errorData);
+    throw new Error(`Gmail API error: ${response.status} - ${JSON.stringify(errorData)}`);
   }
 
   return response.json();
