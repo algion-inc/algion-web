@@ -803,12 +803,10 @@ const TransformerAttentionField = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
+      className="fixed inset-0 w-full h-full"
       style={{ 
         background: 'linear-gradient(135deg, #050810 0%, #0f1419 30%, #1a1f2e 50%, #0f1419 70%, #050810 100%)',
-        width: '100vw',
-        left: '50%',
-        transform: 'translateX(-50%)'
+        zIndex: 0
       }}
     />
   );
@@ -821,7 +819,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-center">
         {/* Transformer Attention Field Canvas Background */}
         <TransformerAttentionField />
         
