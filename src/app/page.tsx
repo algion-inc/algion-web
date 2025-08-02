@@ -715,8 +715,8 @@ const TransformerAttentionField = () => {
           return;
         }
         
-        // Draw static network connections
-        drawNetworkConnections();
+        // Draw dense static network connections for mobile
+        drawStaticNetworkConnections();
         
         // Draw static nodes with completely fixed appearance
         nodesRef.current.forEach((node) => {
@@ -752,6 +752,120 @@ const TransformerAttentionField = () => {
         console.log('Static background rendered with', nodesRef.current.length, 'nodes');
       } catch (error) {
         console.error('Error rendering static background:', error);
+      }
+    };
+    
+    // Dense static network connections for mobile - deterministic but rich
+    const drawStaticNetworkConnections = () => {
+      const nodes = nodesRef.current;
+      if (nodes.length === 0) return;
+      
+      // Create multiple layers of connections with fixed patterns
+      
+      // Layer 1: Basic neighborhood connections (like desktop)
+      nodes.forEach((node, index) => {
+        const maxConnections = Math.min(node.neighbors.length, 15);
+        
+        for (let j = 0; j < maxConnections; j++) {
+          const neighborId = node.neighbors[j];
+          const neighbor = nodes[neighborId];
+          if (!neighbor) continue;
+          
+          const distance = Math.sqrt((node.x - neighbor.x) ** 2 + (node.y - neighbor.y) ** 2);
+          const maxDist = Math.min(width, height) * 0.35;
+          const strength = Math.max(0, 1 - distance / maxDist) * 0.12;
+          
+          if (strength > 0.012) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+            ctx.lineWidth = 0.2;
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(neighbor.x, neighbor.y);
+            ctx.stroke();
+          }
+        }
+      });
+      
+      // Layer 2: Fixed long-distance connections (pseudo-random but deterministic)
+      const longDistanceConnections = Math.floor(nodes.length * 0.6);
+      for (let i = 0; i < longDistanceConnections; i++) {
+        const sourceIndex = (i * 7) % nodes.length; // Fixed pattern
+        const targetIndex = (i * 11 + 3) % nodes.length; // Fixed pattern
+        
+        if (sourceIndex === targetIndex) continue;
+        
+        const sourceNode = nodes[sourceIndex];
+        const targetNode = nodes[targetIndex];
+        
+        const distance = Math.sqrt((sourceNode.x - targetNode.x) ** 2 + (sourceNode.y - targetNode.y) ** 2);
+        const screenDiagonal = Math.sqrt(width * width + height * height);
+        
+        if (distance > screenDiagonal * 0.3 && distance < screenDiagonal * 0.9) {
+          const strength = Math.max(0, 1 - distance / screenDiagonal) * 0.022;
+          
+          if (strength > 0.002) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+            ctx.lineWidth = 0.2;
+            ctx.moveTo(sourceNode.x, sourceNode.y);
+            ctx.lineTo(targetNode.x, targetNode.y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Layer 3: Dense ambient connections (fixed pattern)
+      const ambientConnections = Math.floor(nodes.length * 1.2);
+      for (let i = 0; i < ambientConnections; i++) {
+        const nodeIndex = i % nodes.length;
+        const node = nodes[nodeIndex];
+        
+        // Create fixed "ambient" connections to nearby nodes
+        const nearbyCount = Math.min(12, node.neighbors.length);
+        for (let j = 0; j < nearbyCount; j++) {
+          const neighborId = node.neighbors[j];
+          const neighbor = nodes[neighborId];
+          if (!neighbor) continue;
+          
+          const distance = Math.sqrt((node.x - neighbor.x) ** 2 + (node.y - neighbor.y) ** 2);
+          const maxDist = Math.min(width, height) * 0.35;
+          const strength = Math.max(0, 1 - distance / maxDist) * 0.08;
+          
+          if (strength > 0.009) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+            ctx.lineWidth = 0.2;
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(neighbor.x, neighbor.y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Layer 4: Fixed "particle background" connections
+      const particleConnections = Math.floor(nodes.length * 0.4);
+      for (let i = 0; i < particleConnections; i++) {
+        const nodeIndex = (i * 5) % nodes.length; // Fixed pattern
+        const sourceNode = nodes[nodeIndex];
+        
+        // Create fixed "particle" connections
+        const angles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
+        const angle = angles[i % angles.length]; // Fixed angle pattern
+        const distance = 20 + ((i * 13) % 80); // Fixed distance pattern
+        
+        const targetX = sourceNode.x + Math.cos(angle) * distance;
+        const targetY = sourceNode.y + Math.sin(angle) * distance;
+        
+        if (targetX > 0 && targetX < width && targetY > 0 && targetY < height) {
+          const strength = 0.015 + ((i * 3) % 25) * 0.001; // Fixed strength pattern
+          
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+          ctx.lineWidth = 0.2;
+          ctx.moveTo(sourceNode.x, sourceNode.y);
+          ctx.lineTo(targetX, targetY);
+          ctx.stroke();
+        }
       }
     };
     
