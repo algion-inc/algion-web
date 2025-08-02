@@ -255,10 +255,10 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     replyTo ? `Reply-To: ${replyTo}` : '',
     `Subject: ${encodedSubject}`,
     'MIME-Version: 1.0',
-    'Content-Type: text/html; charset=utf-8',
+    'Content-Type: text/plain; charset=utf-8',
     'Content-Transfer-Encoding: base64',
     '',
-    base64Html
+    base64Text
   ].filter(line => line !== '').join('\r\n');
 
   return message;
