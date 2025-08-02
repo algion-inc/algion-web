@@ -12,6 +12,8 @@ const inter = Inter({
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
+  display: 'swap',
+  preload: false
 });
 
 export const metadata: Metadata = {
