@@ -326,7 +326,7 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     'Content-Type: text/html; charset=utf-8',
     'Content-Transfer-Encoding: quoted-printable',
     '',
-    html.replace(/=/, '=3D').replace(/\r?\n/g, '\r\n')
+    html.replace(/=/g, '=3D')
   ].filter(line => line !== '').join('\r\n');
 
   return message;
