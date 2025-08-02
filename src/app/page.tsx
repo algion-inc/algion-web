@@ -89,7 +89,35 @@ const TransformerAttentionField = () => {
       }
     };
     
+    // Mobile scroll handling - restart animation after scroll ends
+    let scrollTimeout: NodeJS.Timeout | null = null;
+    const handleScroll = () => {
+      if (!isMobile()) return;
+      
+      // Clear existing timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      
+      // Restart animation after scroll ends
+      scrollTimeout = setTimeout(() => {
+        if (isVisible.current && !animationIdRef.current) {
+          animate();
+        }
+      }, 150);
+    };
+    
+    // Focus/blur handling for iOS
+    const handleFocus = () => {
+      if (isVisible.current && !animationIdRef.current) {
+        animate();
+      }
+    };
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('touchend', handleFocus);
     
     // Progressive initialization
     const initAttentionField = async () => {
@@ -793,7 +821,13 @@ const TransformerAttentionField = () => {
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('touchend', handleFocus);
       window.removeEventListener('resize', resizeCanvas);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
