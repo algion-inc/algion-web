@@ -171,10 +171,8 @@ async function sendGmail(env, mailOptions) {
 
   // メール送信
   const email = createEmailMessage(mailOptions);
-  // UTF-8文字列を安全にbase64エンコード
-  const encoder = new TextEncoder();
-  const data = encoder.encode(email);
-  const base64Email = btoa(String.fromCharCode(...data))
+  // メール全体をbase64エンコード（URL-safe形式）
+  const base64Email = btoa(email)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
@@ -191,9 +189,7 @@ async function sendGmail(env, mailOptions) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Gmail API error details:', errorData);
-    throw new Error(`Gmail API error: ${response.status} - ${JSON.stringify(errorData)}`);
+    throw new Error(`Gmail API error: ${response.status}`);
   }
 
   return response.json();
@@ -203,16 +199,17 @@ async function sendGmail(env, mailOptions) {
 function createEmailMessage({ to, from, replyTo, subject, html }) {
   const boundary = '----=_Part_' + Math.random().toString(36).substr(2, 9);
   
-  // UTF-8文字列を安全にbase64エンコード
-  const encoder = new TextEncoder();
-  const data = encoder.encode(html);
-  const base64Html = btoa(String.fromCharCode(...data));
+  // subjectのエンコード（RFC2047形式）
+  const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
+  
+  // HTMLコンテンツのbase64エンコード
+  const base64Html = btoa(unescape(encodeURIComponent(html)));
   
   let message = [
     `To: ${to}`,
     `From: ${from}`,
     replyTo ? `Reply-To: ${replyTo}` : '',
-    `Subject: ${subject}`,
+    `Subject: ${encodedSubject}`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
