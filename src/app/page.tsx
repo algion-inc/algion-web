@@ -488,6 +488,11 @@ const TransformerAttentionField = () => {
       
       lastFrameTime.current = now;
       
+      // Debug: Log first few frames for desktop
+      if (!isMobile() && now < 5000) {
+        console.log('Desktop animation frame at', now.toFixed(0), 'ms');
+      }
+      
       // Skip rendering if not visible, but keep animation loop running
       if (!isVisible.current) {
         animationIdRef.current = requestAnimationFrame(animate);
@@ -987,13 +992,14 @@ const TransformerAttentionField = () => {
         if (isMobile()) {
           // Mobile: Create static display only, no animation loop
           renderStaticBackground();
-          console.log('Mobile static background rendered');
+          console.log('Mobile static background rendered with', nodesRef.current.length, 'nodes');
         } else {
           // Desktop: Full animation - ensure fresh start
           if (animationIdRef.current) {
             cancelAnimationFrame(animationIdRef.current);
             animationIdRef.current = null;
           }
+          console.log('Starting desktop animation with', nodesRef.current.length, 'nodes');
           animate();
         }
       } catch (error) {
