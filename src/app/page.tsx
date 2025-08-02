@@ -763,7 +763,7 @@ const TransformerAttentionField = () => {
       // Create multiple layers of connections with fixed patterns
       
       // Layer 1: Basic neighborhood connections (like desktop)
-      nodes.forEach((node, index) => {
+      nodes.forEach((node) => {
         const maxConnections = Math.min(node.neighbors.length, 15);
         
         for (let j = 0; j < maxConnections; j++) {
