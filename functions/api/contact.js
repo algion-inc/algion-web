@@ -199,15 +199,34 @@ async function sendGmail(env, mailOptions) {
 function createEmailMessage({ to, from, replyTo, subject, html }) {
   const boundary = '----=_Part_' + Math.random().toString(36).substr(2, 9);
   
-  // subjectのエンコード（RFC2047形式）
-  const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
+  // 日本語を含む場合のエンコード処理
+  const encodeHeader = (text) => {
+    // ASCIIのみかチェック
+    if (/^[\x00-\x7F]*$/.test(text)) {
+      return text;
+    }
+    // 日本語を含む場合はRFC2047形式でエンコード
+    return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(text)))}?=`;
+  };
+  
+  // FromフィールドのパースとエンコーディングM
+  let encodedFrom = from;
+  const fromMatch = from.match(/^(.*?)\s*<(.+)>$/);
+  if (fromMatch) {
+    const displayName = fromMatch[1];
+    const emailAddress = fromMatch[2];
+    encodedFrom = `${encodeHeader(displayName)} <${emailAddress}>`;
+  }
+  
+  // subjectのエンコード
+  const encodedSubject = encodeHeader(subject);
   
   // HTMLコンテンツのbase64エンコード
   const base64Html = btoa(unescape(encodeURIComponent(html)));
   
   let message = [
     `To: ${to}`,
-    `From: ${from}`,
+    `From: ${encodedFrom}`,
     replyTo ? `Reply-To: ${replyTo}` : '',
     `Subject: ${encodedSubject}`,
     'MIME-Version: 1.0',
