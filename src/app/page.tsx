@@ -165,62 +165,49 @@ const TransformerAttentionField = () => {
     
     const createInitialNodes = async (count: number) => {
       const types: AttentionNodeType['semanticType'][] = ['query', 'key', 'value', 'output'];
+      const margin = 50;
       
-      if (isMobile()) {
-        // Mobile: Pseudo-random but deterministic placement
-        for (let i = 0; i < count; i++) {
-          // Use deterministic "random" based on index for consistent placement
-          const seed1 = i * 12345;
-          const seed2 = i * 67890;
-          
-          // Generate pseudo-random coordinates that look natural
-          const pseudoX = ((seed1 * 9301 + 49297) % 233280) / 233280.0;
-          const pseudoY = ((seed2 * 9301 + 49297) % 233280) / 233280.0;
-          
-          // Add some margin from edges
-          const margin = 50;
-          const x = margin + pseudoX * (width - 2 * margin);
-          const y = margin + pseudoY * (height - 2 * margin);
-          
-          nodesRef.current.push(createAttentionNode(i, x, y, types));
-        }
-      } else {
-        // Desktop: Random placement with collision detection
-        const screenArea = width * height;
-        const minDistance = Math.sqrt(screenArea / count) * 0.8;
+      for (let i = 0; i < count; i++) {
+        let x, y;
         
-        // Create first node
-        nodesRef.current.push(createAttentionNode(0, Math.random() * width, Math.random() * height, types));
-        
-        for (let i = 1; i < count; i++) {
-          let placed = false;
-          let attempts = 0;
-          const maxAttempts = 15;
-          
-          while (!placed && attempts < maxAttempts) {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
+        if (isMobile()) {
+          // Mobile: Deterministic placement that looks random
+          x = margin + getRandom(i * 12345) * (width - 2 * margin);
+          y = margin + getRandom(i * 67890) * (height - 2 * margin);
+        } else {
+          // Desktop: True random with collision detection
+          if (i === 0) {
+            x = Math.random() * width;
+            y = Math.random() * height;
+          } else {
+            const minDistance = Math.sqrt((width * height) / count) * 0.8;
+            let placed = false;
+            let attempts = 0;
             
-            let validPosition = true;
-            for (const existingNode of nodesRef.current) {
-              const distSq = (x - existingNode.x) ** 2 + (y - existingNode.y) ** 2;
-              if (distSq < minDistance * minDistance) {
-                validPosition = false;
-                break;
+            while (!placed && attempts < 15) {
+              x = Math.random() * width;
+              y = Math.random() * height;
+              
+              let validPosition = true;
+              for (const node of nodesRef.current) {
+                if ((x - node.x) ** 2 + (y - node.y) ** 2 < minDistance ** 2) {
+                  validPosition = false;
+                  break;
+                }
               }
+              
+              if (validPosition) placed = true;
+              attempts++;
             }
             
-            if (validPosition) {
-              nodesRef.current.push(createAttentionNode(i, x, y, types));
-              placed = true;
+            if (!placed) {
+              x = Math.random() * width;
+              y = Math.random() * height;
             }
-            attempts++;
-          }
-          
-          if (!placed) {
-            nodesRef.current.push(createAttentionNode(i, Math.random() * width, Math.random() * height, types));
           }
         }
+        
+        nodesRef.current.push(createAttentionNode(i, x, y, types));
       }
       
       buildOptimizedNeighborhoods();
@@ -257,62 +244,38 @@ const TransformerAttentionField = () => {
     };
     
     
-    const createAttentionNode = (id: number, x: number, y: number, types: AttentionNodeType['semanticType'][]): AttentionNodeType => {
-      if (isMobile()) {
-        // Pseudo-random values for mobile - deterministic but varied
-        const seed = id * 7919; // Prime number for better distribution
-        
-        const pseudoRandom1 = ((seed * 9301 + 49297) % 233280) / 233280.0;
-        const pseudoRandom2 = (((seed + 1) * 9301 + 49297) % 233280) / 233280.0;
-        const pseudoRandom3 = (((seed + 2) * 9301 + 49297) % 233280) / 233280.0;
-        const pseudoRandom4 = (((seed + 3) * 9301 + 49297) % 233280) / 233280.0;
-        const pseudoRandom5 = (((seed + 4) * 9301 + 49297) % 233280) / 233280.0;
-        
-        const semanticType = types[Math.floor(pseudoRandom1 * types.length)];
-        const importance = 0.3 + pseudoRandom2 * 0.7; // 0.3-1.0 range
-        const headId = Math.floor(pseudoRandom3 * 8);
-        
-        return {
-          id,
-          x,
-          y,
-          z: 50 + pseudoRandom4 * 50, // 50-100 range like desktop
-          baseSize: (1.0 + importance * 1.5 + pseudoRandom5 * 0.5) * 1.5,
-          importance,
-          activationLevel: 0.1 + pseudoRandom2 * 0.3,
-          attentionScore: 0,
-          pulsePhase: pseudoRandom3 * Math.PI * 2,
-          bloomIntensity: 0,
-          bloomDecay: 0,
-          lastActivation: 0,
-          neighbors: [],
-          semanticType,
-          headId
-        };
-      } else {
-        // Desktop: keep random for variety
-        const semanticType = types[Math.floor(Math.random() * types.length)];
-        const importance = Math.random() * 0.7 + 0.3;
-        const headId = Math.floor(Math.random() * 8);
-        
-        return {
-          id,
-          x,
-          y,
-          z: 50 + Math.random() * 50,
-          baseSize: (1.0 + importance * 1.5 + Math.random() * 0.5) * 1.5,
-          importance,
-          activationLevel: 0.1 + Math.random() * 0.3,
-          attentionScore: 0,
-          pulsePhase: Math.random() * Math.PI * 2,
-          bloomIntensity: 0,
-          bloomDecay: 0,
-          lastActivation: 0,
-          neighbors: [],
-          semanticType,
-          headId
-        };
+    // Unified random function - uses Math.random for desktop, deterministic for mobile
+    const getRandom = (seed?: number) => {
+      if (isMobile() && seed !== undefined) {
+        return ((seed * 9301 + 49297) % 233280) / 233280.0;
       }
+      return Math.random();
+    };
+    
+    const createAttentionNode = (id: number, x: number, y: number, types: AttentionNodeType['semanticType'][]): AttentionNodeType => {
+      const seed = isMobile() ? id * 7919 : undefined;
+      
+      const semanticType = types[Math.floor(getRandom(seed) * types.length)];
+      const importance = 0.3 + getRandom(seed ? seed + 1 : undefined) * 0.7;
+      const headId = Math.floor(getRandom(seed ? seed + 2 : undefined) * 8);
+      
+      return {
+        id,
+        x,
+        y,
+        z: 50 + getRandom(seed ? seed + 3 : undefined) * 50,
+        baseSize: (1.0 + importance * 1.5 + getRandom(seed ? seed + 4 : undefined) * 0.5) * 1.5,
+        importance,
+        activationLevel: 0.1 + getRandom(seed ? seed + 1 : undefined) * 0.3,
+        attentionScore: 0,
+        pulsePhase: getRandom(seed ? seed + 2 : undefined) * Math.PI * 2,
+        bloomIntensity: 0,
+        bloomDecay: 0,
+        lastActivation: 0,
+        neighbors: [],
+        semanticType,
+        headId
+      };
     };
     
     const buildOptimizedNeighborhoods = () => {
@@ -732,8 +695,12 @@ const TransformerAttentionField = () => {
           return;
         }
         
-        // Draw dense static network connections for mobile
-        drawStaticNetworkConnections();
+        // Draw all network connections
+        if (isMobile()) {
+          drawUnifiedConnections();
+        } else {
+          drawNetworkConnections();
+        }
         
         // Draw static nodes with varied appearance like desktop
         nodesRef.current.forEach((node) => {
@@ -884,6 +851,60 @@ const TransformerAttentionField = () => {
           ctx.moveTo(sourceNode.x, sourceNode.y);
           ctx.lineTo(targetX, targetY);
           ctx.stroke();
+        }
+      }
+    };
+    
+    // Unified connection drawing for mobile - simplified
+    const drawUnifiedConnections = () => {
+      const nodes = nodesRef.current;
+      if (nodes.length === 0) return;
+      
+      // Basic connections (same as desktop)
+      nodes.forEach((node) => {
+        const maxConnections = Math.min(node.neighbors.length, 15);
+        
+        for (let j = 0; j < maxConnections; j++) {
+          const neighbor = nodes[node.neighbors[j]];
+          if (!neighbor) continue;
+          
+          const distance = Math.sqrt((node.x - neighbor.x) ** 2 + (node.y - neighbor.y) ** 2);
+          const maxDist = Math.min(width, height) * 0.35;
+          const strength = Math.max(0, 1 - distance / maxDist) * 0.12;
+          
+          if (strength > 0.012) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+            ctx.lineWidth = 0.2;
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(neighbor.x, neighbor.y);
+            ctx.stroke();
+          }
+        }
+      });
+      
+      // Additional layers for mobile density
+      const longDistanceCount = Math.floor(nodes.length * 0.6);
+      for (let i = 0; i < longDistanceCount; i++) {
+        const sourceNode = nodes[(i * 7) % nodes.length];
+        const targetNode = nodes[(i * 11 + 3) % nodes.length];
+        
+        if (sourceNode !== targetNode) {
+          const distance = Math.sqrt((sourceNode.x - targetNode.x) ** 2 + (sourceNode.y - targetNode.y) ** 2);
+          const screenDiagonal = Math.sqrt(width * width + height * height);
+          
+          if (distance > screenDiagonal * 0.3 && distance < screenDiagonal * 0.9) {
+            const strength = Math.max(0, 1 - distance / screenDiagonal) * 0.022;
+            
+            if (strength > 0.002) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255, 255, 255, ${strength})`;
+              ctx.lineWidth = 0.2;
+              ctx.moveTo(sourceNode.x, sourceNode.y);
+              ctx.lineTo(targetNode.x, targetNode.y);
+              ctx.stroke();
+            }
+          }
         }
       }
     };
