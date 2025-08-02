@@ -89,74 +89,7 @@ const TransformerAttentionField = () => {
       }
     };
     
-    // Mobile scroll handling - more aggressive restart
-    let scrollTimeout: NodeJS.Timeout | null = null;
-    let lastScrollTime = 0;
-    
-    const forceRestartAnimation = () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-        animationIdRef.current = null;
-      }
-      if (isVisible.current) {
-        animate();
-      }
-    };
-    
-    const handleScroll = () => {
-      if (!isMobile()) return;
-      
-      lastScrollTime = Date.now();
-      
-      // Clear existing timeout
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      
-      // Restart animation more frequently during scroll
-      scrollTimeout = setTimeout(() => {
-        forceRestartAnimation();
-      }, 100);
-    };
-    
-    // Periodic check for mobile devices
-    const periodicCheck = () => {
-      if (!isMobile()) return;
-      
-      const now = Date.now();
-      const timeSinceScroll = now - lastScrollTime;
-      
-      // If no scroll for 200ms and no animation running, restart
-      if (timeSinceScroll > 200 && !animationIdRef.current && isVisible.current) {
-        animate();
-      }
-    };
-    
-    // Run periodic check every 300ms on mobile
-    const checkInterval = isMobile() ? setInterval(periodicCheck, 300) : null;
-    
-    // Focus/blur handling for iOS
-    const handleFocus = () => {
-      forceRestartAnimation();
-    };
-    
-    const handleTouchStart = () => {
-      if (isMobile()) {
-        lastScrollTime = Date.now();
-      }
-    };
-    
-    const handleTouchEnd = () => {
-      if (isMobile()) {
-        setTimeout(forceRestartAnimation, 50);
-      }
-    };
-    
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     
     // Progressive initialization
     const initAttentionField = async () => {
@@ -507,8 +440,9 @@ const TransformerAttentionField = () => {
       
       lastFrameTime.current = now;
       
-      // Skip if not visible
+      // Skip rendering if not visible, but keep animation loop running
       if (!isVisible.current) {
+        animationIdRef.current = requestAnimationFrame(animate);
         return;
       }
       
@@ -860,17 +794,7 @@ const TransformerAttentionField = () => {
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('resize', resizeCanvas);
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      if (checkInterval) {
-        clearInterval(checkInterval);
-      }
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
