@@ -60,6 +60,8 @@ const TransformerAttentionField = () => {
   const isVisible = useRef<boolean>(true);
   const neighborCache = useRef<Map<number, number[]>>(new Map());
   const isInitialized = useRef<boolean>(false);
+  const animationStartTime = useRef<number>(Date.now());
+  const pausedTime = useRef<number>(0);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -80,11 +82,17 @@ const TransformerAttentionField = () => {
     
     // Visibility API for performance
     const handleVisibilityChange = () => {
+      const wasVisible = isVisible.current;
       isVisible.current = !document.hidden;
+      
       if (!isVisible.current && animationIdRef.current) {
+        // Pausing - save current progress
+        pausedTime.current += Date.now() - animationStartTime.current;
         cancelAnimationFrame(animationIdRef.current);
         animationIdRef.current = null;
-      } else if (isVisible.current && !animationIdRef.current) {
+      } else if (isVisible.current && !animationIdRef.current && wasVisible !== isVisible.current) {
+        // Resuming - reset start time but keep accumulated time
+        animationStartTime.current = Date.now();
         animate();
       }
     };
@@ -97,6 +105,9 @@ const TransformerAttentionField = () => {
       attentionFlowsRef.current = [];
       neighborCache.current.clear();
       isInitialized.current = false;
+      // Reset animation timing
+      animationStartTime.current = Date.now();
+      pausedTime.current = 0;
       
       const screenArea = width * height;
       const pcArea = 1920 * 1080; // Reference PC screen
@@ -450,7 +461,9 @@ const TransformerAttentionField = () => {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      const time = Date.now() * 0.001;
+      // Use continuous time that survives interruptions
+      const currentTime = Date.now();
+      const time = (currentTime - animationStartTime.current + pausedTime.current) * 0.001;
       
       // Draw subtle particle-like connections
       ctx.globalAlpha = 0.03;
