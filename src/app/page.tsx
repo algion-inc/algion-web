@@ -829,8 +829,18 @@ export default function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex-1 flex flex-col justify-center">
           <div className="mb-12">
             <h1 className="text-6xl lg:text-8xl font-bold text-white mb-8 tracking-tight leading-tight">
-              <span className="block">Algorithm + Vision</span>
-              <span className="block">= <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Algion</span></span>
+              {/* デスクトップ用（2行表示） */}
+              <div className="hidden lg:block">
+                <span className="block">Algorithm + Vision</span>
+                <span className="block">= <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Algion</span></span>
+              </div>
+              
+              {/* モバイル用（3行表示） */}
+              <div className="block lg:hidden">
+                <span className="block">Algorithm</span>
+                <span className="block">+ Vision</span>
+                <span className="block">= <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Algion</span></span>
+              </div>
             </h1>
             <p className="text-xl lg:text-3xl text-white mb-12 max-w-5xl mx-auto font-light leading-relaxed">
               データとアルゴリズムで人々のビジョンを実現する
