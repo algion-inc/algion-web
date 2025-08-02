@@ -147,12 +147,18 @@ const TransformerAttentionField = () => {
       const totalNodes = Math.floor(screenArea * optimalDensity);
       const nodeCount = Math.max(minNodes, Math.min(maxNodes, totalNodes));
       
-      // Stage 1: Create minimal initial nodes for immediate display
-      const initialNodes = Math.min(35, Math.floor(nodeCount * 0.08));
-      await createInitialNodes(initialNodes);
-      
-      // Stage 2: Progressive node addition
-      await progressivelyAddNodes(nodeCount - initialNodes);
+      if (isMobile()) {
+        // Mobile: Create all nodes at once for simplicity and consistency
+        await createInitialNodes(nodeCount);
+      } else {
+        // Desktop: Progressive loading
+        // Stage 1: Create minimal initial nodes for immediate display
+        const initialNodes = Math.min(35, Math.floor(nodeCount * 0.08));
+        await createInitialNodes(initialNodes);
+        
+        // Stage 2: Progressive node addition
+        await progressivelyAddNodes(nodeCount - initialNodes);
+      }
       
       isInitialized.current = true;
     };
