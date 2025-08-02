@@ -848,23 +848,44 @@ const TransformerAttentionField = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
       updateMobileStatus(); // Update mobile status when resizing
+      
+      // Clear any previous rendering state
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
       // Reinitialize network on resize to ensure complete coverage
-      initAttentionField();
+      initAttentionField().then(() => {
+        if (isMobile()) {
+          renderStaticBackground();
+        } else {
+          // Restart animation if not already running
+          if (!animationIdRef.current) {
+            animate();
+          }
+        }
+      });
     };
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
     // Initialize animation - different approach for mobile vs desktop
-    initAttentionField().then(() => {
-      if (isMobile()) {
-        // Mobile: Create static display only, no animation loop
-        renderStaticBackground();
-      } else {
-        // Desktop: Full animation
-        animate();
-      }
-    });
+    const startVisualization = () => {
+      initAttentionField().then(() => {
+        if (isMobile()) {
+          // Mobile: Create static display only, no animation loop
+          renderStaticBackground();
+        } else {
+          // Desktop: Full animation - ensure fresh start
+          if (animationIdRef.current) {
+            cancelAnimationFrame(animationIdRef.current);
+            animationIdRef.current = null;
+          }
+          animate();
+        }
+      });
+    };
+    
+    startVisualization();
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -882,8 +903,10 @@ const TransformerAttentionField = () => {
       style={{ 
         background: 'linear-gradient(135deg, #050810 0%, #0f1419 30%, #1a1f2e 50%, #0f1419 70%, #050810 100%)',
         width: '100vw',
-        left: '50%',
-        transform: 'translateX(-50%)'
+        height: '100vh',
+        left: '0',
+        top: '0',
+        display: 'block'
       }}
     />
   );
