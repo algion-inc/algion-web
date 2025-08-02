@@ -74,20 +74,50 @@ export async function onRequestPost(context) {
 
     // メール本文のHTMLを生成
     const inquiryHtml = `
-      <h2>新しいお問い合わせが届きました</h2>
-      <hr>
-      <p><strong>お名前:</strong> ${name}</p>
-      <p><strong>メールアドレス:</strong> ${email}</p>
-      <p><strong>会社名:</strong> ${company}</p>
-      <p><strong>所属部署・役職:</strong> ${position}</p>
-      <hr>
-      <h3>お問い合わせ内容:</h3>
-      <p style="white-space: pre-wrap;">${message}</p>
-      <hr>
-      <p><small>このメールはAlgion公式サイトのお問い合わせフォームから送信されました。</small></p>
-    `;
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>お問い合わせ</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">新しいお問い合わせが届きました</h2>
     
-    console.log('Sending email with HTML:', inquiryHtml);
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold; width: 150px;">お名前:</td>
+          <td style="padding: 8px 0;">${name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold;">メールアドレス:</td>
+          <td style="padding: 8px 0;">${email}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold;">会社名:</td>
+          <td style="padding: 8px 0;">${company}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold;">所属部署・役職:</td>
+          <td style="padding: 8px 0;">${position}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <h3 style="color: #2c3e50; margin-top: 30px;">お問い合わせ内容:</h3>
+    <div style="background-color: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px; white-space: pre-wrap;">${message}</div>
+    
+    <hr style="margin: 30px 0; border: none; height: 1px; background-color: #e0e0e0;">
+    
+    <p style="color: #7f8c8d; font-size: 12px; text-align: center;">
+      このメールはAlgion公式サイトのお問い合わせフォームから送信されました。
+    </p>
+  </div>
+</body>
+</html>`;
+    
+    console.log('Sending email with HTML length:', inquiryHtml.length);
     
     // Gmail API を使用してメール送信
     const mailResult = await sendGmail(env, {
@@ -255,10 +285,10 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     replyTo ? `Reply-To: ${replyTo}` : '',
     `Subject: ${encodedSubject}`,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=utf-8',
-    'Content-Transfer-Encoding: base64',
+    'Content-Type: text/html; charset=utf-8',
+    'Content-Transfer-Encoding: quoted-printable',
     '',
-    base64Text
+    html.replace(/=/, '=3D').replace(/\r?\n/g, '\r\n')
   ].filter(line => line !== '').join('\r\n');
 
   return message;
