@@ -16,7 +16,7 @@ export default function DebugPage() {
     for (let i = 0; i < styles.length; i++) {
       try {
         console.log(`Stylesheet ${i}:`, styles[i].href || 'inline');
-      } catch (e) {
+      } catch {
         console.log(`Stylesheet ${i}: Cannot access (CORS)`);
       }
     }
