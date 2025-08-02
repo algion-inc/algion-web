@@ -316,6 +316,9 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     'MIME-Version: 1.0',
     'Content-Type: text/html; charset=utf-8',
     'Content-Transfer-Encoding: quoted-printable',
+    'Precedence: bulk',
+    'X-Mailer: AlgionWebsite/1.0',
+    'List-Unsubscribe: <mailto:info@algion.co.jp?subject=unsubscribe>',
     '',
     html.replace(/=/g, '=3D')
   ].filter(line => line !== '').join('\r\n');
