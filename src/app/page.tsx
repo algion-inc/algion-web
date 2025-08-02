@@ -75,8 +75,12 @@ const TransformerAttentionField = () => {
     
     let width: number, height: number;
     
-    // Performance monitoring
-    const isMobile = () => width < 768;
+    // Performance monitoring - define early
+    let isMobileDevice = false;
+    const updateMobileStatus = () => {
+      isMobileDevice = width < 768;
+    };
+    const isMobile = () => isMobileDevice;
     const getTargetFPS = () => isMobile() ? 30 : 60;
     const getFrameInterval = () => 1000 / getTargetFPS();
     
@@ -843,6 +847,7 @@ const TransformerAttentionField = () => {
     const resizeCanvas = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      updateMobileStatus(); // Update mobile status when resizing
       // Reinitialize network on resize to ensure complete coverage
       initAttentionField();
     };
@@ -851,17 +856,15 @@ const TransformerAttentionField = () => {
     window.addEventListener('resize', resizeCanvas);
     
     // Initialize animation - different approach for mobile vs desktop
-    if (isMobile()) {
-      // Mobile: Create static display only, no animation loop
-      initAttentionField().then(() => {
+    initAttentionField().then(() => {
+      if (isMobile()) {
+        // Mobile: Create static display only, no animation loop
         renderStaticBackground();
-      });
-    } else {
-      // Desktop: Full animation
-      initAttentionField().then(() => {
+      } else {
+        // Desktop: Full animation
         animate();
-      });
-    }
+      }
+    });
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
