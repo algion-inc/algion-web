@@ -470,73 +470,75 @@ const TransformerAttentionField = () => {
       drawAmbientConnections();
       ctx.globalAlpha = 1;
       
-      // Update and draw elegant attention flows
-      attentionFlowsRef.current = attentionFlowsRef.current.filter(flow => {
-        flow.progress += flow.speed;
+      // Update and draw elegant attention flows (disabled on mobile)
+      if (!isMobile()) {
+        attentionFlowsRef.current = attentionFlowsRef.current.filter(flow => {
+          flow.progress += flow.speed;
         
-        if (flow.progress >= 1) {
-          const targetNode = nodesRef.current.find(n => n.id === flow.targetId);
-          if (targetNode) {
-            targetNode.bloomIntensity = 0.6;
-            targetNode.bloomDecay = 0.02;
-            targetNode.activationLevel = Math.min(1, targetNode.activationLevel + 0.3);
+          if (flow.progress >= 1) {
+            const targetNode = nodesRef.current.find(n => n.id === flow.targetId);
+            if (targetNode) {
+              targetNode.bloomIntensity = 0.6;
+              targetNode.bloomDecay = 0.02;
+              targetNode.activationLevel = Math.min(1, targetNode.activationLevel + 0.3);
+            }
+            return false;
           }
-          return false;
-        }
-        
-        const t = flow.progress;
-        const easedProgress = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        
-        const controlX = (flow.x + flow.targetX) / 2 + (Math.random() - 0.5) * 50;
-        const controlY = (flow.y + flow.targetY) / 2 + (Math.random() - 0.5) * 50;
-        
-        const currentX = (1 - easedProgress) * (1 - easedProgress) * flow.x + 
-                        2 * (1 - easedProgress) * easedProgress * controlX + 
-                        easedProgress * easedProgress * flow.targetX;
-        const currentY = (1 - easedProgress) * (1 - easedProgress) * flow.y + 
-                        2 * (1 - easedProgress) * easedProgress * controlY + 
-                        easedProgress * easedProgress * flow.targetY;
-        
-        // Add to trail with timestamp for time-based disappearing
-        const currentTime = Date.now();
-        flow.trail.push({ x: currentX, y: currentY, alpha: 1, weight: flow.weight, timestamp: currentTime });
-        
-        // Remove trail points older than 400ms (much faster disappear)
-        const trailLifespan = 400; // milliseconds - much shorter
-        flow.trail = flow.trail.filter(point => currentTime - point.timestamp < trailLifespan);
-        
-        // Draw time-based fading trail points with accelerated fade
-        flow.trail.forEach((point) => {
-          const age = currentTime - point.timestamp;
-          const ageRatio = age / trailLifespan;
           
-          // Exponential fade for faster disappearing + much lower opacity
-          const alpha = Math.max(0, Math.pow(1 - ageRatio, 2) * 0.08 * flow.intensity);
-          const pointSize = Math.max(0, Math.pow(1 - ageRatio, 1.5) * 0.8 * flow.intensity);
+          const t = flow.progress;
+          const easedProgress = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
           
-          // Higher threshold to stop drawing sooner
-          if (alpha > 0.005 && pointSize > 0.05) {
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2);
-            ctx.fill();
-          }
+          const controlX = (flow.x + flow.targetX) / 2 + (Math.random() - 0.5) * 50;
+          const controlY = (flow.y + flow.targetY) / 2 + (Math.random() - 0.5) * 50;
+          
+          const currentX = (1 - easedProgress) * (1 - easedProgress) * flow.x + 
+                          2 * (1 - easedProgress) * easedProgress * controlX + 
+                          easedProgress * easedProgress * flow.targetX;
+          const currentY = (1 - easedProgress) * (1 - easedProgress) * flow.y + 
+                          2 * (1 - easedProgress) * easedProgress * controlY + 
+                          easedProgress * easedProgress * flow.targetY;
+          
+          // Add to trail with timestamp for time-based disappearing
+          const currentTime = Date.now();
+          flow.trail.push({ x: currentX, y: currentY, alpha: 1, weight: flow.weight, timestamp: currentTime });
+          
+          // Remove trail points older than 400ms (much faster disappear)
+          const trailLifespan = 400; // milliseconds - much shorter
+          flow.trail = flow.trail.filter(point => currentTime - point.timestamp < trailLifespan);
+          
+          // Draw time-based fading trail points with accelerated fade
+          flow.trail.forEach((point) => {
+            const age = currentTime - point.timestamp;
+            const ageRatio = age / trailLifespan;
+            
+            // Exponential fade for faster disappearing + much lower opacity
+            const alpha = Math.max(0, Math.pow(1 - ageRatio, 2) * 0.08 * flow.intensity);
+            const pointSize = Math.max(0, Math.pow(1 - ageRatio, 1.5) * 0.8 * flow.intensity);
+            
+            // Higher threshold to stop drawing sooner
+            if (alpha > 0.005 && pointSize > 0.05) {
+              ctx.beginPath();
+              ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+              ctx.arc(point.x, point.y, pointSize, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          });
+          
+          // Draw brighter and more vivid colorful main flow particle
+          ctx.beginPath();
+          const flowGradient = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, 3.8 * flow.intensity);
+          flowGradient.addColorStop(0, `hsla(${flow.hue}, 100%, 95%, 1.0)`);    // Brightest core
+          flowGradient.addColorStop(0.3, `hsla(${flow.hue}, 95%, 88%, 0.85)`);  // Bright inner
+          flowGradient.addColorStop(0.6, `hsla(${flow.hue}, 90%, 80%, 0.5)`);   // Clear middle
+          flowGradient.addColorStop(0.9, `hsla(${flow.hue}, 85%, 72%, 0.2)`);   // Soft outer
+          flowGradient.addColorStop(1, `hsla(${flow.hue}, 80%, 65%, 0)`);       // Fade edge
+          ctx.fillStyle = flowGradient;
+          ctx.arc(currentX, currentY, 3.8 * flow.intensity, 0, Math.PI * 2);
+          ctx.fill();
+          
+          return true;
         });
-        
-        // Draw brighter and more vivid colorful main flow particle
-        ctx.beginPath();
-        const flowGradient = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, 3.8 * flow.intensity);
-        flowGradient.addColorStop(0, `hsla(${flow.hue}, 100%, 95%, 1.0)`);    // Brightest core
-        flowGradient.addColorStop(0.3, `hsla(${flow.hue}, 95%, 88%, 0.85)`);  // Bright inner
-        flowGradient.addColorStop(0.6, `hsla(${flow.hue}, 90%, 80%, 0.5)`);   // Clear middle
-        flowGradient.addColorStop(0.9, `hsla(${flow.hue}, 85%, 72%, 0.2)`);   // Soft outer
-        flowGradient.addColorStop(1, `hsla(${flow.hue}, 80%, 65%, 0)`);       // Fade edge
-        ctx.fillStyle = flowGradient;
-        ctx.arc(currentX, currentY, 3.8 * flow.intensity, 0, Math.PI * 2);
-        ctx.fill();
-        
-        return true;
-      });
+      }
       
       // Draw elegant network structure
       drawNetworkConnections();
@@ -616,8 +618,8 @@ const TransformerAttentionField = () => {
         node.attentionScore = Math.max(0, Math.min(1, node.attentionScore));
       });
       
-      // Generate flows less frequently for performance
-      if (isInitialized.current && Math.random() < 0.4) { // Reduce frequency
+      // Generate flows less frequently for performance (disabled on mobile)
+      if (!isMobile() && isInitialized.current && Math.random() < 0.4) { // Reduce frequency
         const baseRate = 0.02; // Reduced flow rate
         const activeNodes = nodesRef.current.filter(node => node.activationLevel > 0.4);
         const activityMultiplier = Math.min(2, 1 + activeNodes.length / nodesRef.current.length);
@@ -632,8 +634,8 @@ const TransformerAttentionField = () => {
         }
       }
       
-      // Occasional attention bursts (less frequent)
-      if (isInitialized.current && Math.sin(time * 0.2) > 0.96 && Math.random() < 0.2) {
+      // Occasional attention bursts (less frequent, disabled on mobile)
+      if (!isMobile() && isInitialized.current && Math.sin(time * 0.2) > 0.96 && Math.random() < 0.2) {
         for (let i = 0; i < 3; i++) {
           setTimeout(() => createAlgorithmicFlow(), i * 100);
         }
@@ -895,15 +897,10 @@ const TransformerAttentionField = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    if (isMobile()) {
-      // Mobile: Render static frame only
-      initAttentionField().then(() => {
-        renderStaticFrame();
-      });
-    } else {
-      // Desktop: Full animation
+    // Initialize and start animation (same for all devices)
+    initAttentionField().then(() => {
       animate();
-    }
+    });
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
