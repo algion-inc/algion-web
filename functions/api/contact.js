@@ -72,25 +72,30 @@ export async function onRequestPost(context) {
       });
     }
 
+    // メール本文のHTMLを生成
+    const inquiryHtml = `
+      <h2>新しいお問い合わせが届きました</h2>
+      <hr>
+      <p><strong>お名前:</strong> ${name}</p>
+      <p><strong>メールアドレス:</strong> ${email}</p>
+      <p><strong>会社名:</strong> ${company}</p>
+      <p><strong>所属部署・役職:</strong> ${position}</p>
+      <hr>
+      <h3>お問い合わせ内容:</h3>
+      <p style="white-space: pre-wrap;">${message}</p>
+      <hr>
+      <p><small>このメールはAlgion公式サイトのお問い合わせフォームから送信されました。</small></p>
+    `;
+    
+    console.log('Sending email with HTML:', inquiryHtml);
+    
     // Gmail API を使用してメール送信
     const mailResult = await sendGmail(env, {
       to: 'info@algion.co.jp',
       from: 'Algion株式会社 お問い合わせ窓口 <info@algion.co.jp>',
       replyTo: email,
       subject: `【お問い合わせ】${company} ${name}様より`,
-      html: `
-        <h2>新しいお問い合わせが届きました</h2>
-        <hr>
-        <p><strong>お名前:</strong> ${name}</p>
-        <p><strong>メールアドレス:</strong> ${email}</p>
-        <p><strong>会社名:</strong> ${company}</p>
-        <p><strong>所属部署・役職:</strong> ${position}</p>
-        <hr>
-        <h3>お問い合わせ内容:</h3>
-        <p style="white-space: pre-wrap;">${message}</p>
-        <hr>
-        <p><small>このメールはAlgion公式サイトのお問い合わせフォームから送信されました。</small></p>
-      `
+      html: inquiryHtml
     });
 
     // 自動返信メール
@@ -225,8 +230,20 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
   // subjectのエンコード
   const encodedSubject = encodeHeader(subject);
   
-  // HTMLからプレーンテキストを抽出（簡易版）
-  const plainText = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  // HTMLからプレーンテキストを抽出（改良版）
+  const plainText = html
+    .replace(/<hr\s*\/?>/gi, '\n' + '-'.repeat(40) + '\n')  // <hr>を区切り線に
+    .replace(/<h[1-6][^>]*>/gi, '\n')  // 見出しの前に改行
+    .replace(/<\/h[1-6]>/gi, '\n')     // 見出しの後に改行
+    .replace(/<br\s*\/?>/gi, '\n')     // <br>を改行に
+    .replace(/<\/p>/gi, '\n\n')        // 段落の終わりに改行
+    .replace(/<[^>]*>/g, '')           // 残りのHTMLタグを削除
+    .replace(/&nbsp;/g, ' ')           // &nbsp;をスペースに
+    .replace(/&amp;/g, '&')            // &amp;を&に
+    .replace(/&lt;/g, '<')             // &lt;を<に
+    .replace(/&gt;/g, '>')             // &gt;を>に
+    .replace(/\n\s*\n/g, '\n\n')       // 連続する空行を整理
+    .trim();
   
   // プレーンテキストとHTMLコンテンツのbase64エンコード
   const base64Text = btoa(unescape(encodeURIComponent(plainText)));
