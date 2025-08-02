@@ -19,9 +19,6 @@ export async function onRequestPost(context) {
     }
 
     const { name, email, company, position, message } = body;
-    
-    // デバッグ用ログ
-    console.log('Received form data:', { name, email, company, position, message });
 
     // 入力値のバリデーション
     if (!name || !email || !company || !position || !message) {
@@ -117,7 +114,6 @@ export async function onRequestPost(context) {
 </body>
 </html>`;
     
-    console.log('Sending email with HTML length:', inquiryHtml.length);
     
     // Gmail API を使用してメール送信
     const mailResult = await sendGmail(env, {
@@ -172,7 +168,6 @@ export async function onRequestPost(context) {
 
     } catch (autoReplyError) {
       console.error('自動返信メール送信エラー:', autoReplyError);
-      console.error('Error details:', autoReplyError.message);
       return new Response(JSON.stringify({ 
         message: 'お問い合わせを送信しました。ありがとうございます。（確認メールの送信に失敗しましたが、お問い合わせは正常に受け付けられました）' 
       }), {
