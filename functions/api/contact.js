@@ -221,7 +221,11 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
   // subjectのエンコード
   const encodedSubject = encodeHeader(subject);
   
-  // HTMLコンテンツのbase64エンコード
+  // HTMLからプレーンテキストを抽出（簡易版）
+  const plainText = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  
+  // プレーンテキストとHTMLコンテンツのbase64エンコード
+  const base64Text = btoa(unescape(encodeURIComponent(plainText)));
   const base64Html = btoa(unescape(encodeURIComponent(html)));
   
   let message = [
@@ -233,10 +237,17 @@ function createEmailMessage({ to, from, replyTo, subject, html }) {
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
     `--${boundary}`,
+    'Content-Type: text/plain; charset=utf-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    base64Text,
+    '',
+    `--${boundary}`,
     'Content-Type: text/html; charset=utf-8',
     'Content-Transfer-Encoding: base64',
     '',
     base64Html,
+    '',
     `--${boundary}--`
   ].filter(line => line !== '').join('\r\n');
 
