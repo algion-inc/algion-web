@@ -69,47 +69,112 @@ export async function onRequestPost(context) {
       });
     }
 
-    // メール本文のHTMLを生成
+    // メール本文のHTMLを生成（Webサイトデザインに合わせて）
     const inquiryHtml = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>お問い合わせ</title>
+  <title>お問い合わせ - Algion株式会社</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-  <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">新しいお問い合わせが届きました</h2>
+<body style="margin: 0; padding: 0; font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #000000; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #eff6ff 100%);">
+  
+  <!-- Main Container -->
+  <div style="max-width: 680px; margin: 0 auto; background-color: #ffffff;">
     
-    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 8px 0; font-weight: bold; width: 150px;">お名前:</td>
-          <td style="padding: 8px 0;">${name}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0; font-weight: bold;">メールアドレス:</td>
-          <td style="padding: 8px 0;">${email}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0; font-weight: bold;">会社名:</td>
-          <td style="padding: 8px 0;">${company}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0; font-weight: bold;">所属部署・役職:</td>
-          <td style="padding: 8px 0;">${position}</td>
-        </tr>
-      </table>
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #000000 0%, #374151 100%); padding: 40px 32px; text-align: center; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -50px; left: 20%; width: 150px; height: 150px; background: rgba(34, 197, 94, 0.1); border-radius: 50%; filter: blur(40px);"></div>
+      <div style="position: absolute; bottom: -50px; right: 20%; width: 150px; height: 150px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; filter: blur(40px);"></div>
+      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.025em; position: relative;">
+        新しいお問い合わせが届きました
+      </h1>
+      <p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.8); font-size: 16px; font-weight: 300; position: relative;">
+        Algion 公式サイトより
+      </p>
     </div>
-    
-    <h3 style="color: #2c3e50; margin-top: 30px;">お問い合わせ内容:</h3>
-    <div style="background-color: #ffffff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 5px; white-space: pre-wrap;">${message}</div>
-    
-    <hr style="margin: 30px 0; border: none; height: 1px; background-color: #e0e0e0;">
-    
-    <p style="color: #7f8c8d; font-size: 12px; text-align: center;">
-      このメールはAlgion公式サイトのお問い合わせフォームから送信されました。
-    </p>
+
+    <!-- Content -->
+    <div style="padding: 48px 32px;">
+      
+      <!-- Contact Info Card -->
+      <div style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 24px; padding: 32px; margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);">
+        <h2 style="margin: 0 0 24px 0; color: #000000; font-size: 24px; font-weight: 600; letter-spacing: -0.025em;">
+          お問い合わせ者情報
+        </h2>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; width: 140px; vertical-align: top;">
+              お名前
+            </td>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #000000; font-size: 16px;">
+              ${name}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; vertical-align: top;">
+              メール
+            </td>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #2563eb; font-size: 16px;">
+              <a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); font-weight: 600; color: #000000; vertical-align: top;">
+              会社名
+            </td>
+            <td style="padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); color: #000000; font-size: 16px;">
+              ${company}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 0; font-weight: 600; color: #000000; vertical-align: top;">
+              部署・役職
+            </td>
+            <td style="padding: 16px 0; color: #000000; font-size: 16px;">
+              ${position}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Message Card -->
+      <div style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 24px; padding: 32px; margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 20px 0; color: #000000; font-size: 20px; font-weight: 600; letter-spacing: -0.025em;">
+          お問い合わせ内容
+        </h3>
+        <div style="background-color: #f8fafc; border: 2px solid rgba(0, 0, 0, 0.1); border-radius: 16px; padding: 24px; white-space: pre-wrap; font-size: 16px; line-height: 1.6; color: #000000;">
+${message}
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div style="text-align: center; margin: 48px 0;">
+        <a href="mailto:${email}" style="display: inline-block; background: linear-gradient(135deg, #000000 0%, #374151 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s;">
+          返信する
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 32px; text-align: center; border-top: 1px solid rgba(0, 0, 0, 0.1);">
+      <div style="margin-bottom: 16px;">
+        <h4 style="margin: 0; color: #000000; font-size: 18px; font-weight: 700; letter-spacing: -0.025em;">
+          Algion株式会社
+        </h4>
+      </div>
+      <p style="margin: 0; color: rgba(0, 0, 0, 0.6); font-size: 14px; line-height: 1.5;">
+        〒107-0062 東京都港区南青山3-1-36 青山丸竹ビル6F<br>
+        Email: <a href="mailto:info@algion.co.jp" style="color: #2563eb;">info@algion.co.jp</a>
+      </p>
+      <p style="margin: 16px 0 0 0; color: rgba(0, 0, 0, 0.4); font-size: 12px;">
+        このメールはAlgion公式サイトのお問い合わせフォームから自動送信されました。
+      </p>
+    </div>
+
   </div>
 </body>
 </html>`;
