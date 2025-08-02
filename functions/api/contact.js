@@ -2,19 +2,20 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    const formData = await request.formData();
-    const body = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      company: formData.get('company'),
-      position: formData.get('position'),
-      message: formData.get('message'),
-    };
-
-    // JSON形式での送信にも対応
+    let body;
+    
+    // Content-Typeに基づいて適切な処理を選択
     if (request.headers.get('content-type')?.includes('application/json')) {
-      const jsonBody = await request.json();
-      Object.assign(body, jsonBody);
+      body = await request.json();
+    } else {
+      const formData = await request.formData();
+      body = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        company: formData.get('company'),
+        position: formData.get('position'),
+        message: formData.get('message'),
+      };
     }
 
     const { name, email, company, position, message } = body;
