@@ -104,8 +104,8 @@ export async function onRequestPost(context) {
             </p>
             
             <p style="margin: 0 0 30px 0; color: #333333; font-size: 16px; line-height: 1.5;">
-              この度はAlgion株式会社へお問い合わせいただき、ありがとうございます。<br>
-              以下の内容でお問い合わせを受け付けました。
+              この度はAlgion株式会社へお問い合わせいただき、誠にありがとうございます。<br>
+              以下の内容にてお問い合わせを承りました。
             </p>
 
             <!-- Contact Details -->
@@ -147,13 +147,14 @@ export async function onRequestPost(context) {
                   お問い合わせ内容
                 </td>
                 <td style="padding: 12px;">
-                  <div style="white-space: pre-wrap;">${message}</div>
+                  <div style="white-space: pre-line; line-height: 1.6;">${message}</div>
                 </td>
               </tr>
             </table>
 
             <p style="margin: 0 0 30px 0; color: #333333; font-size: 16px; line-height: 1.5;">
-              担当者より折り返しご連絡いたします。今しばらくお待ちください。
+              内容を確認の上、担当者よりご連絡いたしますので、今しばらくお待ちください。<br>
+              引き続き何卒よろしくお願いいたします。
             </p>
 
           </td>
