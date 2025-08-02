@@ -86,15 +86,6 @@ export async function onRequestPost(context) {
       
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px;">
         
-        <!-- Header -->
-        <tr>
-          <td style="padding: 40px 0; text-align: center; border-bottom: 1px solid #eee;">
-            <h1 style="margin: 0; color: #000000; font-size: 24px; font-weight: normal;">
-              Algion
-            </h1>
-          </td>
-        </tr>
-
         <!-- Content -->
         <tr>
           <td style="padding: 40px 0;">
