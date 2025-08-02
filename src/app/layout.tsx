@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: "岡本 秀明" }],
   creator: "Algion株式会社",
   publisher: "Algion株式会社",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
   openGraph: {
     title: "Algion株式会社",
     description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
