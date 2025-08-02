@@ -1028,9 +1028,7 @@ const TransformerAttentionField = () => {
         height: '100vh',
         left: '0',
         top: '0',
-        position: 'absolute', // Back to absolute positioning
-        display: 'block',
-        zIndex: '1' // Positive z-index but behind other content
+        display: 'block'
       }}
     />
   );
