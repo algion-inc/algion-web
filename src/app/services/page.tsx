@@ -1,152 +1,153 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  ClipboardList,
+  FlaskConical,
+  MessagesSquare,
+  Wrench,
+} from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'サービス | Algion株式会社',
-  description: 'Algionの法人向けAIソリューション・AIコンサルティング・SaaSプロダクトが企業課題を解決します。',
+  title: "サービス・目安料金 | Algion株式会社",
+  description: "AI構想整理、PoC開発・評価、本開発・運用設計、技術顧問・継続改善の内容、成果物、目安料金をご案内します。",
+  alternates: { canonical: "/services" },
 };
+
+const services = [
+  {
+    icon: ClipboardList,
+    title: "業務・AI設計",
+    price: "30〜50万円",
+    period: "2〜4週",
+    forWhom: "AIをどこに使うか、何を検証するかが決まっていないチーム",
+    actions: ["業務・データ・制約の整理", "AI・ルール・人の役割分担", "評価方針とPoC範囲の設計"],
+    outputs: "業務整理、AIの役割、評価方針、PoC計画",
+    boundary: "方針と検証計画を納品するサービスです。ソフトウェア実装は含みません。",
+  },
+  {
+    icon: FlaskConical,
+    title: "PoC開発・評価",
+    price: "150万円〜",
+    period: "1〜2ヶ月",
+    forWhom: "技術・業務の成立性を、動くものと評価結果で判断したいチーム",
+    actions: ["検証用プロトタイプの開発", "評価データ・評価指標の設計", "品質・速度・コスト等の比較"],
+    outputs: "試作、評価セット、評価結果、次段階の判断材料",
+    boundary: "合意した検証論点が対象です。データ収集、大規模なデータ整備、本番運用は標準範囲に含みません。",
+  },
+  {
+    icon: Wrench,
+    title: "本開発・運用設計",
+    price: "個別見積",
+    period: "伴走は月50万円〜",
+    forWhom: "PoCを既存業務・システムへ組み込み、継続利用できる形にしたいチーム",
+    actions: ["API・DB・クラウドへの実装", "ログ・監視・安全性の設計", "回帰評価・更新・切り戻し設計"],
+    outputs: "本番実装、運用設計、評価・監視基盤、技術ドキュメント",
+    boundary: "月額伴走は稼働上限付きです。フルタイム常駐、24時間監視、SLA、運用代行は含みません。",
+  },
+  {
+    icon: MessagesSquare,
+    title: "技術顧問・継続改善",
+    price: "月10〜30万円",
+    period: "月次契約",
+    forWhom: "社内チームの設計・実装判断と、品質・コスト改善を継続的に支えたいチーム",
+    actions: ["設計・コードレビュー", "モデル・評価・コストの相談", "改善テーマと優先順位の整理"],
+    outputs: "レビュー記録、技術助言、改善提案",
+    boundary: "月10万円の枠は相談・定例レビュー等の上限を定め、実装を含みません。",
+  },
+];
 
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="relative py-32 lg:py-48 pt-32 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50/30"></div>
-        <div className="absolute top-20 right-1/4 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl lg:text-8xl font-bold text-black mb-8 tracking-tight leading-tight">
-            AIでビジネスを
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-              次のステージへ
-            </span>
+      <section className="border-b border-gray-200 bg-gray-950 py-20 text-white sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-semibold text-cyan-400">SERVICES</p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+            構想整理から本番実装まで、<br />必要な段階から。
           </h1>
-          <p className="text-xl lg:text-3xl text-gray-900 mb-12 max-w-5xl mx-auto font-light leading-relaxed">
-            Algionの法人向けAIソリューション、AIコンサルティング、<br />SaaSプロダクトが企業課題を解決します。
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-white/70 sm:text-xl">
+            業務と技術をつなぎ、次の意思決定に必要な成果物をフェーズごとに提供します。初回相談は無料です。
           </p>
-          <Link 
-            href="/contact"
-            className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 transform"
-          >
-            お問い合わせ
+          <Link href="/contact" className="mt-8 inline-flex min-h-12 items-center rounded-full bg-white px-7 py-3 font-semibold text-black hover:bg-cyan-50">
+            無料相談を申し込む <ArrowRight className="ml-2" size={18} />
           </Link>
         </div>
       </section>
 
-      {/* Services */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl lg:text-4xl font-bold text-black mb-16 text-center">提供するサービス</h2>
-          
-          {/* 法人向けAIソリューション */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold text-black mb-8 flex items-center">
-              <span className="mr-3"></span>法人向けAIソリューション
-            </h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: "生成AI導入基盤", desc: "各社LLMサービスやローカルLLMの導入と運用基盤、セキュリティ・権限管理を提供" },
-                { title: "AIナレッジ検索", desc: "社内外ドキュメントのAI検索・再生成・RAG活用" },
-                { title: "文書・会議サポートAI", desc: "ドキュメント・議事録の自動生成、音声文字起こし、要約・タスク抽出" },
-                { title: "業務自動化AIエージェント", desc: "調査分析・戦略策定支援・コード生成などの業務を自動化するAIエージェント" },
-                { title: "画像認識AI", desc: "製造ライン検品自動化・帳票OCR処理・店舗棚割チェックなどの画像認識ソリューション" },
-                { title: "需要予測・在庫最適化AI", desc: "需要予測による欠品防止・在庫圧縮、小売・物流向けソリューション" },
-                { title: "業界特化型生成AI", desc: "保険査定支援・医療問診サマリ化・不動産レコメンドAIなど業界特有業務向け生成AI" }
-              ].map((service, index) => (
-                <div key={index} className="bg-white p-6 rounded-2xl shadow-elegant">
-                  <h4 className="font-bold text-black mb-3">{service.title}</h4>
-                  <p className="text-gray-700 text-sm">{service.desc}</p>
-                </div>
-              ))}
-            </div>
+      <section className="py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold text-blue-700">SERVICE MENU</p>
+            <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">4つのご支援</h2>
+            <p className="mt-5 text-lg leading-relaxed text-gray-600">
+              無料相談では適合性と次の進め方を整理します。調査・設計・開発を伴う工程は、目的と成果物を定めてご提案します。
+            </p>
           </div>
 
-          {/* AIコンサルティング */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold text-black mb-8 flex items-center">
-              <span className="mr-3"></span>AIコンサルティング
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                { title: "AI戦略・導入支援コンサルティング", desc: "AI導入ロードマップ策定、ROI評価、実施計画立案" },
-                { title: "データ戦略コンサルティング", desc: "AI導入のためのデータ設計、データ収集戦略、品質管理支援" },
-                { title: "教育支援・AI人材育成", desc: "法人向けAI研修、ハンズオン教育、教材作成・提供、社内AI人材育成支援" },
-                { title: "研究開発・R&Dパートナー", desc: "最新AI技術検証、共同研究、業界・顧客向けカスタムAIモデル開発" }
-              ].map((service, index) => (
-                <div key={index} className="bg-white p-6 rounded-2xl shadow-elegant">
-                  <h4 className="font-bold text-black mb-3">{service.title}</h4>
-                  <p className="text-gray-700 text-sm">{service.desc}</p>
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {services.map(({ icon: Icon, ...service }) => (
+              <article key={service.title} className="flex flex-col rounded-lg border border-gray-200 bg-white p-7 shadow-sm sm:p-8">
+                <div className="flex flex-col gap-5 border-b border-gray-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <Icon className="text-blue-600" size={28} />
+                    <h3 className="mt-5 text-2xl font-bold text-gray-950">{service.title}</h3>
+                  </div>
+                  <div className="sm:text-right">
+                    <p className="text-2xl font-bold text-gray-950">{service.price}</p>
+                    <p className="mt-1 text-sm text-gray-500">{service.period}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <p className="mt-6 font-semibold leading-relaxed text-gray-800">{service.forWhom}</p>
+                <ul className="mt-5 space-y-3">
+                  {service.actions.map((action) => (
+                    <li key={action} className="flex gap-3 text-gray-600"><Check className="mt-0.5 shrink-0 text-cyan-600" size={18} />{action}</li>
+                  ))}
+                </ul>
+                <div className="mt-6 border-t border-gray-200 pt-5">
+                  <p className="text-sm font-semibold text-gray-950">主な成果物</p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">{service.outputs}</p>
+                  <p className="mt-4 text-sm leading-relaxed text-gray-500">{service.boundary}</p>
+                </div>
+              </article>
+            ))}
           </div>
 
-          {/* SaaSプロダクト */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold text-black mb-8 flex items-center">
-              <span className="mr-3"></span>SaaSプロダクト
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                { title: "生成AIマネージドプラットフォーム", desc: "Algion管理のクラウド型生成AIインフラ。インフラ運用不要で生成AIを活用可能。β版リリース準備中" },
-                { title: "運用・MLOpsサポート", desc: "モデル運用管理・精度監視・再学習など継続運用支援" }
-              ].map((service, index) => (
-                <div key={index} className="bg-white p-6 rounded-2xl shadow-elegant">
-                  <h4 className="font-bold text-black mb-3">{service.title}</h4>
-                  <p className="text-gray-700 text-sm">{service.desc}</p>
-                </div>
-              ))}
-            </div>
+          <div className="mt-10 rounded-lg border border-blue-200 bg-blue-50 p-6 text-sm leading-relaxed text-gray-700">
+            <p className="font-semibold text-gray-950">価格について</p>
+            <p className="mt-2">表示価格は税別の目安です。要件・データ状況・開発範囲に応じて個別にお見積もりします。クラウド、外部API、ライセンス等の利用料は、特記がない限り別途です。</p>
           </div>
         </div>
       </section>
 
-      {/* Value Propositions */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl lg:text-4xl font-bold text-black mb-16 text-center">Algionの提供価値</h2>
-          
-          <div className="space-y-12">
+      <section className="bg-gray-50 py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-semibold text-blue-700">HOW WE WORK</p>
+          <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">進め方</h2>
+          <div className="mt-10 grid gap-8 md:grid-cols-4">
             {[
-              {
-                title: "高度な技術力と豊富な実績",
-                desc: "国際学会での論文発表や受賞経験をはじめ、ソフトバンクでの飛び級昇進、PayPay、ソニー、IBM、東大松尾研発AIスタートアップ等での実務経験を持つメンバーが在籍。研究開発から社会実装までの幅広い経験に基づき、高品質なAIを提供します。"
-              },
-              {
-                title: "課題抽出から運用まで一気通貫",
-                desc: "お客様のビジョンと業務ニーズを的確に捉え、要件定義・PoC・開発・運用改善までを一貫して支援。導入後も継続的に改善をサポートし、現場でのAIの定着と活用を促進します。"
-              },
-              {
-                title: "柔軟でスピーディなAI導入",
-                desc: "技術動向やビジネス環境の変化に柔軟に対応できる設計思想で、迅速な検証と改善を繰り返し早期の成果創出を実現します。小さく始めて確実に成果を拡大するアプローチで、お客様のビジネス成長を支援します。"
-              }
-            ].map((value, index) => (
-              <div key={index} className="bg-gray-50 p-8 rounded-2xl">
-                <h3 className="text-xl font-bold text-black mb-4">
-                  <span className="mr-3">{"①②③"[index]}</span> {value.title}
-                </h3>
-                <p className="text-gray-700">{value.desc}</p>
+              ["01", "無料相談", "相談内容と適合性を確認"],
+              ["02", "設計", "業務・データ・評価を整理"],
+              ["03", "検証", "試作と評価で成立性を判断"],
+              ["04", "実装・改善", "使えるものを本番へ接続"],
+            ].map(([step, title, text]) => (
+              <div key={step} className="border-t-2 border-blue-600 pt-5">
+                <p className="text-sm font-bold text-blue-600">{step}</p>
+                <h3 className="mt-3 text-xl font-bold text-gray-950">{title}</h3>
+                <p className="mt-2 text-gray-600">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-black mb-6">AlgionのAIサービスについて</h2>
-          <p className="text-xl text-gray-700 mb-8">
-            AlgionのAIサービスに関するご質問・資料請求はお気軽にどうぞ。
-          </p>
-          <Link 
-            href="/contact"
-            className="inline-block bg-black text-white px-8 py-4 rounded-lg font-medium text-lg hover:opacity-80 transition-opacity"
-          >
-            お問い合わせフォームへ
+      <section className="bg-black py-20 text-center text-white">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <h2 className="text-3xl font-bold sm:text-4xl">依頼する範囲が決まっていなくても大丈夫です。</h2>
+          <p className="mt-5 text-lg text-white/65">業務と制約を伺い、最初に整理すべきことからご提案します。</p>
+          <Link href="/contact" className="mt-8 inline-flex min-h-12 items-center rounded-full bg-white px-7 py-3 font-semibold text-black hover:bg-cyan-50">
+            無料相談を申し込む <ArrowRight className="ml-2" size={18} />
           </Link>
         </div>
       </section>

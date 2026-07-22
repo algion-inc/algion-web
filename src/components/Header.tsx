@@ -1,79 +1,85 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
-const Header = () => {
+const navigation = [
+  { href: "/", label: "ホーム" },
+  { href: "/services", label: "サービス" },
+  { href: "/media", label: "メディア" },
+  { href: "/about", label: "会社情報" },
+];
+
+export default function Header() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => setIsOpen(false), [pathname]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-2xl border-b border-white/20 shadow-elegant">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20 sm:h-24">
-          <div className="flex items-center">
-            <Link href="/" className="group">
-              <div className="bg-black rounded-xl overflow-hidden group-hover:-translate-y-1 transition-all duration-300 shadow-elegant group-hover:shadow-elegant-hover">
-                <div className="px-4 sm:px-8 py-2 sm:py-3">
-                  <span className="text-white font-bold text-2xl sm:text-3xl tracking-tight opacity-100">Algion</span>
-                </div>
-              </div>
-            </Link>
-          </div>
-          
-          {/* Desktop Navigation - Always visible */}
-          <div className="flex items-center space-x-4 sm:space-x-8 lg:space-x-16">
-            <Link 
-              href="/"
-              className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/' 
-                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white opacity-60 hover:opacity-100'
-              }`}
-            >
-              ホーム
-            </Link>
-            <Link 
-              href="/services"
-              className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/services' || pathname === '/services/'
-                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white opacity-60 hover:opacity-100'
-              }`}
-            >
-              サービス
-            </Link>
-            <Link 
-              href="/media"
-              className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/media' || pathname?.startsWith('/media/') 
-                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white opacity-60 hover:opacity-100'
-              }`}
-            >
-              メディア
-            </Link>
-            <Link 
-              href="/about"
-              className={`text-sm sm:text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 relative ${
-                pathname === '/about' || pathname === '/about/'
-                  ? 'text-white opacity-100 after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full' 
-                  : 'text-white opacity-60 hover:opacity-100'
-              }`}
-            >
-              会社情報
-            </Link>
-            <Link 
-              href="/contact"
-              className="bg-gradient-to-r from-white via-gray-100 to-white text-black px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-semibold hover:shadow-elegant-hover hover:shadow-white/25 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
-            >
-              <span className="relative z-10">お問い合わせ</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-};
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/95 text-white backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:h-24 sm:px-6 lg:px-8">
+        <Link href="/" className="text-2xl font-bold sm:text-3xl" aria-label="Algion ホーム">
+          Algion
+        </Link>
 
-export default Header;
+        <nav className="hidden items-center gap-7 md:flex lg:gap-10" aria-label="メインナビゲーション">
+          {navigation.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`border-b py-2 text-sm font-semibold transition-colors lg:text-base ${
+                isActive(item.href)
+                  ? "border-cyan-400 text-white"
+                  : "border-transparent text-white/65 hover:text-white"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href="/contact"
+            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-cyan-50 lg:px-6 lg:text-base"
+          >
+            無料相談を申し込む
+          </Link>
+        </nav>
+
+        <button
+          type="button"
+          onClick={() => setIsOpen((value) => !value)}
+          className="inline-flex size-11 items-center justify-center rounded-full border border-white/20 md:hidden"
+          aria-expanded={isOpen}
+          aria-controls="mobile-navigation"
+          aria-label={isOpen ? "メニューを閉じる" : "メニューを開く"}
+        >
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <nav id="mobile-navigation" className="border-t border-white/10 bg-black px-4 py-5 md:hidden" aria-label="モバイルナビゲーション">
+          <div className="mx-auto flex max-w-7xl flex-col gap-1">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-lg px-4 py-3 font-semibold ${isActive(item.href) ? "bg-white/10 text-white" : "text-white/70"}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link href="/contact" className="mt-3 rounded-lg bg-white px-4 py-3 text-center font-semibold text-black">
+              無料相談を申し込む
+            </Link>
+          </div>
+        </nav>
+      )}
+    </header>
+  );
+}

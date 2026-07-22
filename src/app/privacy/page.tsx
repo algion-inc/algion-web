@@ -1,102 +1,68 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: 'プライバシーポリシー | Algion株式会社',
-  description: 'Algion株式会社のプライバシーポリシー',
+  title: "プライバシーポリシー | Algion株式会社",
+  description: "Algion株式会社のプライバシーポリシー",
+  alternates: { canonical: "/privacy" },
 };
+
+const sections = [
+  {
+    title: "取得する情報",
+    body: "当社は、お問い合わせへの対応に必要な範囲で、次の情報を取得する場合があります。",
+    items: ["お名前、メールアドレス、会社名", "所属部署・役職", "相談段階、業務・課題、お問い合わせ内容", "データ状況、開始時期、予算帯", "参照元、UTMパラメータ、初回閲覧ページ"],
+  },
+  {
+    title: "利用目的",
+    body: "取得した情報は、次の目的で利用します。",
+    items: ["お問い合わせやご相談への対応", "提案内容と連絡方法の検討", "当社サービスとウェブサイトの改善", "不正利用、迷惑行為、セキュリティ上の問題への対応"],
+  },
+  {
+    title: "AIと提供データの取り扱い",
+    body: "お客様から提供された個人情報や法人情報を、許可なくAIモデルの学習や改善に利用することはありません。詳細なデータの確認が必要な場合は、ご相談後に目的と取り扱い方法を合意します。",
+  },
+  {
+    title: "安全管理",
+    body: "取得した情報へのアクセスを必要な範囲に制限し、漏えい、滅失、き損、不正アクセスの防止に必要な措置を講じます。",
+  },
+  {
+    title: "外部サービスの利用",
+    body: "お問い合わせフォームの不正利用防止にCloudflare Turnstileを、問い合わせ対応のメール送信にGoogleのGmail APIを利用します。これらのサービスでは、セキュリティ確認やメール送信に必要な範囲で情報が取り扱われる場合があります。",
+  },
+  {
+    title: "委託先の管理",
+    body: "利用目的の達成に必要な範囲で個人情報の取り扱いを外部へ委託する場合は、委託先を適切に選定し、必要かつ適切な監督を行います。",
+  },
+  {
+    title: "第三者提供",
+    body: "法令に基づく場合、人の生命・身体・財産の保護に必要な場合など、法令上認められる場合を除き、ご本人の同意なく個人情報を第三者へ提供しません。",
+  },
+  {
+    title: "開示・訂正・削除",
+    body: "ご本人から開示、訂正、削除等のご希望があった場合は、法令に従い適切に対応します。",
+  },
+  {
+    title: "ポリシーの変更",
+    body: "本ポリシーは、法令やサービス内容の変更に応じて改定する場合があります。変更後の内容は本ウェブサイトに掲載します。",
+  },
+];
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="py-32 lg:py-40 pt-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl lg:text-6xl font-bold text-black mb-6 tracking-tight">
-            プライバシーポリシー
-          </h1>
-          <p className="text-xl lg:text-2xl text-gray-900 mb-8 max-w-4xl mx-auto">
-            Algion株式会社は、<br />お客様の個人情報を適切に取り扱い、その保護に努めます。
-          </p>
-        </div>
-      </section>
-
-      {/* Privacy Policy Content */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-8 rounded-2xl shadow-elegant space-y-8">
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">個人情報の取得</h2>
-              <p className="text-gray-700 mb-4">当社は、お客様から以下の情報を取得する場合があります。</p>
-              <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                <li>お名前</li>
-                <li>メールアドレス</li>
-                <li>会社名</li>
-                <li>所属部署・役職</li>
-                <li>お問い合わせ内容</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">個人情報の利用目的</h2>
-              <p className="text-gray-700 mb-4">収集した情報は以下の目的で利用します。</p>
-              <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                <li>お問い合わせやご相談への対応</li>
-                <li>取材対応</li>
-                <li>当社サービスの改善および案内</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">AI特有のデータ利用方針</h2>
-              <p className="text-gray-700 mb-4">当社は、お客様から提供された個人情報や法人情報をAIモデルの学習や改善に利用することはありません。</p>
-              <p className="text-gray-700">AIモデルの改善等の目的でデータを利用する場合には、事前にお客様から明確な同意を取得いたします。</p>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">個人情報の安全管理措置</h2>
-              <p className="text-gray-700 mb-4">当社は、取得した個人情報の漏洩、滅失、き損などを防止するため、以下の措置を講じます。</p>
-              <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                <li>個人情報取扱いに関する基本方針の策定</li>
-                <li>個人情報の取扱責任者および体制の整備</li>
-                <li>情報アクセス権限の制限および管理</li>
-                <li>セキュリティ対策ソフトウェアの導入、定期的な更新</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">個人情報の第三者への提供</h2>
-              <p className="text-gray-700 mb-4">当社は、以下の場合を除き、お客様の同意なしに個人情報を第三者に提供しません。</p>
-              <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                <li>法令に基づく場合</li>
-                <li>人の生命、身体、財産保護のために必要がある場合で、お客様の同意取得が困難なとき</li>
-                <li>公衆衛生や児童の健全育成のために特に必要がある場合</li>
-                <li>国や地方公共団体からの法令に基づく協力要請があり、同意取得が困難な場合</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">個人情報の開示・訂正・削除について</h2>
-              <p className="text-gray-700">お客様は、ご自身の個人情報の開示・訂正・削除を求めることが可能です。開示・訂正・削除をご希望の場合は、お問い合わせフォームよりご連絡ください。</p>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">プライバシーポリシーの変更</h2>
-              <p className="text-gray-700">当社は、本ポリシーを必要に応じて改定することがあります。変更があった場合は、本ウェブサイトに掲載いたします。</p>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-black mb-4">お問い合わせ窓口</h2>
-              <p className="text-gray-700">プライバシーポリシーに関するお問い合わせは、
-                <Link 
-                  href="/contact"
-                  className="text-blue-600 hover:text-blue-700 underline ml-1"
-                >
-                  お問い合わせフォーム
-                </Link>
-                よりご連絡ください。
-              </p>
-            </div>
+      <section className="border-b border-gray-200 py-20 sm:py-28"><div className="mx-auto max-w-5xl px-4 sm:px-6"><p className="text-sm font-semibold text-blue-700">PRIVACY</p><h1 className="mt-4 text-4xl font-bold text-gray-950 sm:text-5xl">プライバシーポリシー</h1><p className="mt-5 text-lg text-gray-600">Algion株式会社は、取得する情報を目的に必要な範囲で適切に取り扱います。</p><p className="mt-4 text-sm text-gray-500">最終改定日：2026年7月19日</p></div></section>
+      <section className="bg-gray-50 py-20 sm:py-24">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="rounded-lg border border-gray-200 bg-white px-6 py-2 sm:px-10">
+            {sections.map((section) => (
+              <section key={section.title} className="border-b border-gray-200 py-8 last:border-b-0">
+                <h2 className="text-xl font-bold text-gray-950">{section.title}</h2>
+                <p className="mt-4 leading-relaxed text-gray-600">{section.body}</p>
+                {section.items && <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">{section.items.map((item) => <li key={item}>{item}</li>)}</ul>}
+              </section>
+            ))}
+            <section className="py-8"><h2 className="text-xl font-bold text-gray-950">お問い合わせ窓口</h2><p className="mt-4 text-gray-600">本ポリシーに関するお問い合わせは、<Link href="/contact" className="font-semibold text-blue-700 underline">お問い合わせフォーム</Link>よりご連絡ください。</p></section>
           </div>
         </div>
       </section>

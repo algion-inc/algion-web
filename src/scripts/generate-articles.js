@@ -34,6 +34,11 @@ function generateArticlesData() {
           const fileContent = fs.readFileSync(filePath, 'utf-8');
           const { data } = matter(fileContent);
 
+          // 非公開原稿は一覧・静的データへ含めない
+          if (data.draft === true) {
+            continue;
+          }
+
           // 必須フィールドの検証
           if (!data.title || !data.date || !data.excerpt) {
             console.warn(`Missing required fields in ${filePath}`);

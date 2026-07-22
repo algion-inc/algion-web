@@ -174,6 +174,11 @@ export async function getArticles(): Promise<Article[]> {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
         const { data, content } = matter(fileContent);
 
+        // 非公開原稿は一覧・個別ページ・静的パスへ含めない
+        if (data.draft === true) {
+          continue;
+        }
+
         // frontmatterデータの検証
         const validation = validateFrontmatter(data);
         

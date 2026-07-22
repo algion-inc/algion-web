@@ -14,7 +14,7 @@
 
 ### 必要な環境
 
-- Node.js 18以上
+- Node.js 20.9以上
 - npm または yarn
 
 ### ローカル開発サーバーの起動
@@ -38,4 +38,4 @@ npm run build
 
 ## お問い合わせ機能
 
-お問い合わせフォームは Cloudflare Pages Functions と Gmail API を組み合わせてメール送信を実現しています。環境変数の設定については `CLOUDFLARE_SETUP.md` を参照してください。
+お問い合わせフォームは Cloudflare Turnstile、Cloudflare Pages Functions、Gmail APIを組み合わせています。Turnstileのサーバー検証とCloudflare側のレート制限を有効にしてから公開してください。環境変数と公開前設定については `CLOUDFLARE_SETUP.md` を参照してください。

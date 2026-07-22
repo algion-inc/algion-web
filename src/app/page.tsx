@@ -2,7 +2,23 @@
 
 import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Eye, Target, Zap, Users, Mail, Globe, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import {
+  ArrowRight,
+  AudioLines,
+  Boxes,
+  Building2,
+  CheckCircle2,
+  Cloud,
+  Code2,
+  Gauge,
+  Handshake,
+  ImageIcon,
+  Mail,
+  RefreshCcw,
+  Search,
+  Workflow,
+} from 'lucide-react';
 import articlesData from '../data/articles.json';
 
 interface Article {
@@ -11,6 +27,7 @@ interface Article {
   category: "導入事例" | "技術解説" | "お知らせ";
   date: string;
   slug: string;
+  excerpt: string;
 }
 
 // Types for Transformer/Attention-based Neural Field
@@ -58,6 +75,7 @@ const TransformerAttentionField = () => {
   // Performance optimization refs
   const lastFrameTime = useRef<number>(0);
   const isVisible = useRef<boolean>(true);
+  const isInViewport = useRef<boolean>(true);
   const neighborCache = useRef<Map<number, number[]>>(new Map());
   const isInitialized = useRef<boolean>(false);
   const animationStartTime = useRef<number>(Date.now());
@@ -69,6 +87,8 @@ const TransformerAttentionField = () => {
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     // Sharp rendering settings for crisp laser-like lines
     ctx.imageSmoothingEnabled = false;
@@ -81,6 +101,7 @@ const TransformerAttentionField = () => {
       isMobileDevice = width < 768;
     };
     const isMobile = () => isMobileDevice;
+    const shouldRenderStatic = () => isMobile() || prefersReducedMotion;
     const getTargetFPS = () => isMobile() ? 30 : 60;
     const getFrameInterval = () => 1000 / getTargetFPS();
     
@@ -94,7 +115,7 @@ const TransformerAttentionField = () => {
         pausedTime.current += Date.now() - animationStartTime.current;
         cancelAnimationFrame(animationIdRef.current);
         animationIdRef.current = null;
-      } else if (isVisible.current && !animationIdRef.current && wasVisible !== isVisible.current) {
+      } else if (isVisible.current && isInViewport.current && !animationIdRef.current && wasVisible !== isVisible.current && !shouldRenderStatic()) {
         // Resuming - reset start time but keep accumulated time
         animationStartTime.current = Date.now();
         animate();
@@ -147,8 +168,8 @@ const TransformerAttentionField = () => {
       const totalNodes = Math.floor(screenArea * optimalDensity);
       const nodeCount = Math.max(minNodes, Math.min(maxNodes, totalNodes));
       
-      if (isMobile()) {
-        // Mobile: Create all nodes at once for simplicity and consistency
+      if (shouldRenderStatic()) {
+        // Static variants create all nodes at once.
         await createInitialNodes(nodeCount);
       } else {
         // Desktop: Progressive loading
@@ -217,8 +238,8 @@ const TransformerAttentionField = () => {
     };
     
     const progressivelyAddNodes = async (remainingCount: number) => {
-      if (isMobile()) {
-        // Mobile: Skip progressive addition, all nodes were created in initial batch
+      if (shouldRenderStatic()) {
+        // Static variants already created all nodes in the initial batch.
         return;
       }
       
@@ -488,14 +509,9 @@ const TransformerAttentionField = () => {
       
       lastFrameTime.current = now;
       
-      // Debug: Log first few frames for desktop
-      if (!isMobile() && now < 5000) {
-        console.log('Desktop animation frame at', now.toFixed(0), 'ms');
-      }
-      
-      // Skip rendering if not visible, but keep animation loop running
-      if (!isVisible.current) {
-        animationIdRef.current = requestAnimationFrame(animate);
+      // Stop scheduling frames while the tab or hero is not visible.
+      if (!isVisible.current || !isInViewport.current) {
+        animationIdRef.current = null;
         return;
       }
       
@@ -743,7 +759,6 @@ const TransformerAttentionField = () => {
           ctx.fill();
         });
         
-        console.log('Static background rendered with', nodesRef.current.length, 'nodes');
       } catch (error) {
         console.error('Error rendering static background:', error);
       }
@@ -975,7 +990,7 @@ const TransformerAttentionField = () => {
         updateMobileStatus();
         
         // For mobile, only redraw if nodes exist but avoid frequent redrawing
-        if (isMobile() && nodesRef.current.length > 0) {
+        if (shouldRenderStatic() && nodesRef.current.length > 0) {
           // Use a timeout to debounce rapid resize events
           setTimeout(() => {
             if (canvas && ctx) {
@@ -988,6 +1003,23 @@ const TransformerAttentionField = () => {
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      const nextInViewport = entry.isIntersecting;
+      if (nextInViewport === isInViewport.current) return;
+
+      isInViewport.current = nextInViewport;
+      if (!nextInViewport && animationIdRef.current) {
+        pausedTime.current += Date.now() - animationStartTime.current;
+        cancelAnimationFrame(animationIdRef.current);
+        animationIdRef.current = null;
+      } else if (nextInViewport && isVisible.current && !shouldRenderStatic() && isInitialized.current && !animationIdRef.current) {
+        animationStartTime.current = Date.now();
+        animate();
+      }
+    }, { threshold: 0.01 });
+
+    intersectionObserver.observe(canvas);
     
     // Initialize animation - different approach for mobile vs desktop
     const startVisualization = async () => {
@@ -997,18 +1029,16 @@ const TransformerAttentionField = () => {
         // Force a small delay to ensure everything is ready
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        if (isMobile()) {
-          // Mobile: Create static display only, no animation loop
+        if (shouldRenderStatic()) {
+          // Mobile and reduced-motion variants use a fixed display.
           renderStaticBackground();
-          console.log('Mobile static background rendered with', nodesRef.current.length, 'nodes');
         } else {
           // Desktop: Full animation - ensure fresh start
           if (animationIdRef.current) {
             cancelAnimationFrame(animationIdRef.current);
             animationIdRef.current = null;
           }
-          console.log('Starting desktop animation with', nodesRef.current.length, 'nodes');
-          animate();
+          if (isVisible.current && isInViewport.current) animate();
         }
       } catch (error) {
         console.error('Visualization initialization failed:', error);
@@ -1020,6 +1050,7 @@ const TransformerAttentionField = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', resizeCanvas);
+      intersectionObserver.disconnect();
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
@@ -1041,211 +1072,252 @@ const TransformerAttentionField = () => {
 };
 
 export default function HomePage() {
-  // ビルド時に生成された静的データを使用
-  const articles = articlesData.latestByCategory as Article[];
+  const articles = (articlesData.articles as Article[]).slice(0, 3);
+
+  const consultationPoints = [
+    {
+      icon: Search,
+      title: 'AIを使う場所が決まっていない',
+      text: '業務課題はあるものの、AIが有効な場所や、人が判断すべき範囲を整理できていない段階。',
+    },
+    {
+      icon: Workflow,
+      title: '要件や評価方法が決まっていない',
+      text: '構想はあるものの、何をもって成功とするか、どこまで試すかが定まっていない段階。',
+    },
+    {
+      icon: RefreshCcw,
+      title: 'PoCから本番へ進めない',
+      text: '試作は動いたものの、品質、コスト、運用、既存システムとの接続に課題が残る段階。',
+    },
+  ];
+
+  const approaches = [
+    {
+      icon: Workflow,
+      title: '業務からAIの役割を決める',
+      text: '業務上の判断、例外、責任範囲を整理し、AI、固定ルール、既存システム、人の役割を分けて設計します。',
+    },
+    {
+      icon: Gauge,
+      title: '「動く」から「使える」まで検証する',
+      text: '精度だけでなく、速度、コスト、安定性、体験、安全性まで、実際の利用条件に近い形で確かめます。',
+    },
+    {
+      icon: RefreshCcw,
+      title: '評価と改善を運用に組み込む',
+      text: '失敗ケースを評価資産として残し、ログ、監視、回帰評価、更新、切り戻しまで改善できる形を作ります。',
+    },
+  ];
+
+  const capabilities = [
+    { icon: Boxes, text: '生成AI・LLM・RAG・AIエージェント' },
+    { icon: ImageIcon, text: '画像認識・音声処理・マルチモーダルAI' },
+    { icon: AudioLines, text: '予測・最適化・データ分析' },
+    { icon: Cloud, text: 'API・DB・クラウド・評価基盤' },
+  ];
+
+  const services = [
+    { title: '業務・AI設計', text: 'AIを使う場所と使わない場所を整理し、評価方法とPoC計画を作ります。' },
+    { title: 'PoC開発・評価', text: '動く試作と評価セットを作り、技術・業務の成立性を確かめます。' },
+    { title: '本開発・運用設計', text: '既存システムへの組み込みから、ログ・監視・安全性・運用まで設計します。' },
+    { title: '技術顧問・継続改善', text: '設計・コードレビュー、回帰評価、品質・コスト改善を継続的に支援します。' },
+  ];
+
+  const process = [
+    { step: '01', title: '無料相談', text: '内容を確認し、必要に応じて30分ほどオンラインでお話しします。' },
+    { step: '02', title: '業務・AI設計', text: '業務、データ、制約を整理し、AIの役割と評価方法を決めます。' },
+    { step: '03', title: 'PoC開発・評価', text: '試作と評価セットを作り、品質、速度、コスト、安定性を確認します。' },
+    { step: '04', title: '本開発・継続改善', text: '効果を確認できたものを本開発へ進め、運用後も改善できる形にします。' },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Transformer Attention Field Canvas Background */}
+      <section className="relative flex min-h-[78svh] items-center overflow-hidden lg:min-h-[82svh]">
         <TransformerAttentionField />
-        
-        {/* Main Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex-1 flex flex-col justify-center">
-          <div className="mb-12">
-            <h1 className="text-6xl lg:text-8xl font-bold text-white mb-8 tracking-tight leading-tight">
-              {/* デスクトップ用（2行表示） */}
-              <div className="hidden lg:block">
-                <span className="block">Algorithm + Vision</span>
-                <span className="block">= <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Algion</span></span>
-              </div>
-              
-              {/* モバイル用（3行表示） */}
-              <div className="block lg:hidden">
-                <span className="block">Algorithm</span>
-                <span className="block">+ Vision</span>
-                <span className="block">= <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Algion</span></span>
-              </div>
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-4xl">
+            <p className="mb-6 text-sm font-semibold text-cyan-300 sm:text-base">Algorithm + Vision = Algion</p>
+            <h1 className="text-4xl font-bold leading-[1.25] text-white sm:text-5xl lg:text-6xl">
+              構想段階のAIを、<br className="hidden sm:block" />現場で使える仕組みへ。
             </h1>
-            <p className="text-xl lg:text-3xl text-white mb-12 max-w-5xl mx-auto font-light leading-relaxed">
-              データとアルゴリズムで人々のビジョンを実現する
+            <p className="mt-7 max-w-3xl text-lg leading-relaxed text-white/75 sm:text-xl">
+              構想整理から、短期の技術検証、評価設計、本番実装、運用改善まで。機械学習とソフトウェア開発の両面から、AIを現場で使い続けられる仕組みへつなげます。
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link 
-                href="/services"
-                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group min-w-[220px]"
-              >
-                <span className="mr-2">サービスを見る</span>
-                <ChevronRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href="/contact" className="inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-7 py-3 font-semibold text-white transition-transform hover:-translate-y-0.5">
+                無料相談を申し込む <ArrowRight className="ml-2" size={18} />
               </Link>
-              <Link 
-                href="/contact"
-                className="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 hover:-translate-y-1 transition-all duration-300 min-w-[220px]"
-              >
-                お問い合わせ
+              <Link href="/services" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3 font-semibold text-white backdrop-blur-sm hover:bg-white/15">
+                サービスと目安料金を見る
               </Link>
-            </div>
-          </div>
-        </div>
-        
-        {/* Scroll Indicator */}
-        <div className="relative z-10 pb-8 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Vision & Mission Section */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="bg-white p-8 rounded-2xl shadow-elegant">
-              <div className="flex items-center mb-6">
-                <div className="bg-blue-100 p-3 rounded-full mr-4">
-                  <Eye className="text-blue-600" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">Vision</h3>
-              </div>
-              <p className="text-gray-900 text-lg">人々の可能性を最大限に引き出す</p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-2xl shadow-elegant">
-              <div className="flex items-center mb-6">
-                <div className="bg-green-100 p-3 rounded-full mr-4">
-                  <Target className="text-green-600" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">Mission</h3>
-              </div>
-              <p className="text-gray-900 text-lg">テクノロジーを価値に変え、人々の創造と成長を加速させる</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Summary */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              主要サービス
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供
-            </p>
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold text-blue-700">STARTING POINT</p>
+            <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">こんな段階からご相談いただけます</h2>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-gray-50 p-8 rounded-2xl shadow-elegant">
-              <div className="bg-blue-100 p-3 rounded-full w-fit mb-6">
-                <Zap className="text-blue-600" size={32} />
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {consultationPoints.map(({ icon: Icon, title, text }) => (
+              <div key={title} className="border-t border-gray-300 pt-6">
+                <Icon className="text-blue-600" size={26} />
+                <h3 className="mt-5 text-xl font-bold text-gray-950">{title}</h3>
+                <p className="mt-3 leading-relaxed text-gray-600">{text}</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">法人向けAIソリューション</h3>
-              <p className="text-gray-700">
-                生成AI導入基盤、AIナレッジ検索、業務自動化AIエージェントなど、企業の課題に応じたAIソリューションを提供します。
-              </p>
-            </div>
-            
-            <div className="bg-gray-50 p-8 rounded-2xl shadow-elegant">
-              <div className="bg-green-100 p-3 rounded-full w-fit mb-6">
-                <Users className="text-green-600" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">AIコンサルティング</h3>
-              <p className="text-gray-700">
-                AI戦略策定、データ戦略、教育支援、研究開発パートナーとして、AI導入から運用まで一貫して支援します。
-              </p>
-            </div>
-            
-            <div className="bg-gray-50 p-8 rounded-2xl shadow-elegant">
-              <div className="bg-purple-100 p-3 rounded-full w-fit mb-6">
-                <Globe className="text-purple-600" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">SaaSプロダクト</h3>
-              <p className="text-gray-700">
-                生成AIマネージドプラットフォーム、MLOpsサポートなど、クラウド型AIインフラを提供します。
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex justify-center mt-16">
-            <Link 
-              href="/services"
-              className="inline-flex items-center bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <span className="mr-2">サービス一覧を見る</span>
-              <ArrowRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Media Summary */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              メディア
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              AI導入事例、技術解説、最新ニュースを発信しています
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {articles.map((article) => (
-              <Link 
-                key={article.id}
-                href={`/media/${article.slug}`}
-                className="bg-white p-6 rounded-2xl shadow-elegant hover:shadow-elegant-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col group"
-              >
-                <div className="mb-4">
-                  <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                    {article.category}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 flex-1 group-hover:text-gray-700 transition-colors">
-                  {article.title}
-                </h3>
-                <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
-                  <span>{article.date}</span>
-                  <ArrowRight size={16} className="text-gray-400 group-hover:text-black transition-colors" />
-                </div>
-              </Link>
             ))}
           </div>
-          
-          <div className="flex justify-center mt-16">
-            <Link 
-              href="/media"
-              className="inline-flex items-center bg-black text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <span className="mr-2">メディアを見る</span>
-              <ArrowRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
+          <p className="mt-10 border-l-2 border-cyan-500 pl-5 text-gray-700">
+            特定の業界に限定せず、業務課題とデータ、利用条件に応じて最適な構成を設計します。
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-gray-50 py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold text-blue-700">APPROACH</p>
+            <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">AIを、現場で使える価値へ</h2>
+            <p className="mt-5 text-lg leading-relaxed text-gray-600">
+              技術ありきで構成を決めず、業務と制約からAIの役割を設計します。AIを使わない方がよい部分はシンプルに保ちます。
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            {approaches.map(({ icon: Icon, title, text }, index) => (
+              <article key={title} className="rounded-lg border border-gray-200 bg-white p-7 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <Icon className="text-blue-600" size={28} />
+                  <span className="text-sm font-semibold text-gray-400">0{index + 1}</span>
+                </div>
+                <h3 className="mt-8 text-xl font-bold text-gray-950">{title}</h3>
+                <p className="mt-4 leading-relaxed text-gray-600">{text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 border-y border-gray-200 py-7">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {capabilities.map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-start gap-3 text-sm font-semibold text-gray-700">
+                  <Icon className="mt-0.5 shrink-0 text-cyan-600" size={18} />
+                  <span>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-7 border-l-2 border-blue-600 pl-6 md:grid-cols-[1.1fr_1fr] md:items-center md:pl-8">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-950">AIとソフトウェアを、ひとつの設計として扱う</h3>
+              <p className="mt-4 leading-relaxed text-gray-600">
+                AIプロダクトとソフトウェア開発の経験を背景に、業務整理、技術判断、評価、本番実装を分断せずに進めます。
+              </p>
+            </div>
+            <div className="grid gap-3 text-sm font-semibold text-gray-800 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
+              {['AI Strategy', 'Machine Learning × Software Engineering', 'PoC → Production'].map((item) => (
+                <div key={item} className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-blue-600" size={17} />{item}</div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Contact Section */}
-      <section className="py-24 bg-black">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mb-12">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              AIで新しい価値を創造しませんか？
-            </h2>
-            <p className="text-xl text-gray-100 mb-8 max-w-2xl mx-auto">
-              Algionのサービスに関するご質問や導入のご相談は、<br />お気軽にお問い合わせください。
-            </p>
-            <Link 
-              href="/contact"
-              className="inline-flex items-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-elegant-hover hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <Mail className="inline-block w-5 h-5 mr-2" />
-              <span className="mr-2">お問い合わせ</span>
-              <ArrowRight className="inline-block w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold text-blue-700">SERVICES</p>
+            <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">ご支援できること</h2>
+            <p className="mt-5 text-lg text-gray-600">初回相談は無料です。構想整理、PoC、評価、本開発、継続改善まで、必要な段階からご依頼いただけます。</p>
           </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            <div className="rounded-lg bg-gray-950 p-7 text-white">
+              <Building2 className="text-cyan-400" size={27} />
+              <h3 className="mt-5 text-xl font-bold">事業会社のAI・DX・プロダクトチーム</h3>
+              <p className="mt-3 leading-relaxed text-white/65">業務と技術をつなぐシニア人材が不足し、構想、PoC、本番化のどこかで前進しづらいチーム。</p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-7">
+              <Handshake className="text-blue-600" size={27} />
+              <h3 className="mt-5 text-xl font-bold text-gray-950">AI企業・SIer・コンサルティング会社</h3>
+              <p className="mt-3 leading-relaxed text-gray-600">AI評価、機械学習、ソフトウェア実装を任せられる外部開発パートナーを探しているチーム。</p>
+            </div>
+          </div>
+          <div className="mt-10 grid gap-x-8 gap-y-2 md:grid-cols-2">
+            {services.map((service) => (
+              <div key={service.title} className="grid grid-cols-[auto_1fr] gap-4 border-b border-gray-200 py-6">
+                <Code2 className="mt-1 text-blue-600" size={21} />
+                <div><h3 className="text-lg font-bold text-gray-950">{service.title}</h3><p className="mt-2 text-gray-600">{service.text}</p></div>
+              </div>
+            ))}
+          </div>
+          <Link href="/services" className="mt-9 inline-flex items-center rounded-full bg-black px-7 py-3 font-semibold text-white hover:bg-gray-800">
+            料金の詳細を見る <ArrowRight className="ml-2" size={18} />
+          </Link>
+        </div>
+      </section>
+
+      <section className="bg-gray-50 py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-semibold text-blue-700">PROCESS</p>
+          <h2 className="mt-3 text-3xl font-bold text-gray-950 sm:text-4xl">ご依頼の流れ</h2>
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {process.map((item) => (
+              <div key={item.step} className="border-t-2 border-blue-600 pt-5">
+                <span className="text-sm font-bold text-blue-600">{item.step}</span>
+                <h3 className="mt-3 text-xl font-bold text-gray-950">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+          <div>
+            <p className="text-sm font-semibold text-blue-700">FOUNDER</p>
+            <div className="mt-5 grid gap-6 sm:grid-cols-[150px_1fr] lg:grid-cols-1">
+              <Image src="/hideaki-okamoto-profile.jpg" alt="Algion株式会社 代表取締役CEO 岡本秀明" width={320} height={427} className="aspect-[3/4] w-full max-w-[280px] rounded-lg object-cover" />
+              <div>
+                <h2 className="text-3xl font-bold text-gray-950">岡本 秀明 / Hideaki Okamoto</h2>
+                <p className="mt-2 font-semibold text-gray-800">代表取締役CEO / AI &amp; Software Engineer</p>
+                <p className="mt-5 leading-relaxed text-gray-600">
+                  ソフトバンクで機械学習エンジニアとしてAIプロダクトの研究開発と実装に携わり、高市場価値AI人材に認定。PayPayではFDE / Senior Software Engineerとして、AIエージェントの開発を主導しています。2025年にAlgion株式会社を設立し、代表取締役CEOとして、AI活用の構想整理から技術検証、本番実装、運用改善までを一貫して支援しています。
+                </p>
+                <Link href="/about" className="mt-6 inline-flex items-center font-semibold text-blue-700 hover:text-blue-900">代表プロフィールの詳細 <ArrowRight className="ml-2" size={17} /></Link>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-end justify-between gap-4">
+              <div><p className="text-sm font-semibold text-blue-700">MEDIA</p><h2 className="mt-3 text-3xl font-bold text-gray-950">技術発信</h2></div>
+              <Link href="/media" className="hidden items-center text-sm font-semibold text-gray-700 sm:inline-flex">一覧を見る <ArrowRight className="ml-2" size={16} /></Link>
+            </div>
+            <div className="mt-7 divide-y divide-gray-200 border-y border-gray-200">
+              {articles.map((article) => (
+                <Link key={article.id} href={`/media/${article.slug}`} className="group grid gap-2 py-6 sm:grid-cols-[110px_1fr_auto] sm:items-center sm:gap-5">
+                  <span className="text-xs font-semibold text-blue-700">{article.category}</span>
+                  <div><h3 className="font-bold text-gray-950 group-hover:text-blue-700">{article.title}</h3><p className="mt-1 line-clamp-1 text-sm text-gray-500">{article.excerpt}</p></div>
+                  <ArrowRight className="hidden text-gray-400 sm:block" size={18} />
+                </Link>
+              ))}
+            </div>
+            <Link href="/media" className="mt-6 inline-flex items-center text-sm font-semibold text-gray-700 sm:hidden">一覧を見る <ArrowRight className="ml-2" size={16} /></Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-black py-20 text-white sm:py-24">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <Mail className="mx-auto text-cyan-400" size={30} />
+          <h2 className="mt-6 text-3xl font-bold sm:text-4xl">まだ、AIを使うべきか決まっていなくても構いません。</h2>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/65">業務と制約を整理し、どこから着手し、どう本番へつなげるかを一緒に考えます。</p>
+          <Link href="/contact" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 py-3 font-semibold text-black hover:bg-cyan-50">
+            無料相談を申し込む <ArrowRight className="ml-2" size={18} />
+          </Link>
         </div>
       </section>
     </div>

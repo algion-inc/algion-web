@@ -53,7 +53,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {article.tags && article.tags.length > 0 && (
                 <div className="flex items-center">
                   <Tag size={16} className="mr-2" />
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {article.tags.map((tag) => (
                       <span 
                         key={tag} 
@@ -86,6 +86,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               [&_code]:bg-gray-100 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-red-600 [&_code]:font-mono [&_code]:text-sm
               [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:text-gray-600 [&_blockquote]:italic
               [&_table]:w-full [&_table]:my-6 [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300
+              [&_table]:block [&_table]:overflow-x-auto
               [&_th]:bg-gray-50 [&_th]:text-gray-700 [&_th]:font-bold [&_th]:text-left [&_th]:px-4 [&_th]:py-3 [&_th]:border [&_th]:border-gray-300
               [&_td]:text-gray-700 [&_td]:px-4 [&_td]:py-3 [&_td]:border [&_td]:border-gray-300
               [&_td_a]:text-blue-600 [&_td_a]:no-underline hover:[&_td_a]:underline
@@ -107,7 +108,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             href="/contact"
             className="inline-block bg-black text-white px-8 py-4 rounded-lg font-medium text-lg hover:opacity-80 transition-opacity"
           >
-            お問い合わせフォームへ
+            無料相談を申し込む
           </Link>
         </div>
       </section>
@@ -138,5 +139,15 @@ export async function generateMetadata({ params }: ArticlePageProps) {
   return {
     title: `${article.title} | Algion`,
     description: article.excerpt,
+    alternates: { canonical: `/media/${article.slug}` },
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: 'article',
+      url: `/media/${article.slug}`,
+      publishedTime: article.rawDate?.toISOString(),
+      authors: article.author ? [article.author] : undefined,
+      tags: article.tags,
+    },
   };
 }

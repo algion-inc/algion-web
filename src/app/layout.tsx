@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import type { Viewport } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import SiteShell from "@/components/SiteShell";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,16 +17,19 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "Algion株式会社",
-  description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
-  keywords: "AI, 人工知能, LLM, 大規模言語モデル, AIコンサルティング, SaaS, 機械学習, データサイエンス",
+  metadataBase: new URL("https://algion.co.jp"),
+  title: "AI開発・PoC支援 | Algion株式会社",
+  description: "AIを使う場所の整理からPoC・評価設計・本番実装・運用改善まで。機械学習とソフトウェア開発の両面から、AIを現場で使い続けられる仕組みへつなげます。",
+  keywords: "AI開発, PoC開発, 生成AI, RAG, AIエージェント, 機械学習, ソフトウェア開発, 評価設計",
   authors: [{ name: "岡本 秀明" }],
   creator: "Algion株式会社",
   publisher: "Algion株式会社",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Algion株式会社",
-    description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
+    title: "Algion株式会社 | 構想段階のAIを、現場で使える仕組みへ。",
+    description: "AIを使う場所の整理からPoC・評価設計・本番実装・運用改善まで。機械学習とソフトウェア開発の両面から支援します。",
     url: "https://algion.co.jp",
     siteName: "Algion株式会社",
     images: [
@@ -42,14 +45,20 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Algion株式会社",
-    description: "法人向けAIソリューション、AIコンサルティング、SaaSプロダクトを提供。生成AI・LLMの導入から運用まで包括的に支援します。",
+    title: "Algion株式会社 | AI開発・PoC支援",
+    description: "構想段階のAIを、現場で使える仕組みへ。",
     images: ["/Algion_logo_512x512.png"],
   },
   icons: {
     icon: '/Algion_logo_32x32.png',
     apple: '/Algion_logo_180x180.png',
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -73,11 +82,7 @@ if(typeof window !== 'undefined' && !('requestIdleCallback' in window)){
 }
 `           }}
         />
-        <Header />
-        <main className="pt-20 sm:pt-24">
-          {children}
-        </main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
