@@ -56,7 +56,7 @@ export default function AboutPage() {
               <div className="mt-8 space-y-5 leading-relaxed text-gray-600">
                 <p>法政大学大学院にて機械学習およびコンピュータビジョンの研究に取り組み、修士号を取得。在学中にIEEE BigDataで論文発表。</p>
                 <p>2021年からソフトバンク株式会社に機械学習エンジニアとして在籍。AIプロダクトの研究開発とソフトウェア実装に携わり、高市場価値AI人材に認定され、リーダー／係長級へ飛び級昇進。</p>
-                <p>2023年よりPayPay株式会社にSenior Software Engineer, Machine Learningとして参画。現在はFDEとしてAIエージェントの開発を主導。</p>
+                <p>2023年よりPayPay株式会社にSenior Software Engineer, Machine Learningとして参画。現在はForward Deployed EngineerとしてAIエージェントの開発を主導。</p>
                 <p>並行して、東京大学松尾研究室発の株式会社AlmondoをはじめとするAIスタートアップで、機械学習エンジニア、ソフトウェアエンジニア、プロジェクトマネージャーとして活動。</p>
                 <p>2025年6月にAlgion株式会社を設立。機械学習とソフトウェア開発の両面から、業務理解、技術検証、本番実装、運用改善まで支援しています。</p>
               </div>

@@ -33,9 +33,9 @@ const expertise = [
 ];
 
 const career = [
-  { year: "2025–Present", company: "Algion株式会社", role: "Founder & CEO" },
-  { year: "2023–Present", company: "PayPay株式会社", role: "FDE / Senior Software Engineer（担当部長相当）" },
-  { year: "2021–2023", company: "ソフトバンク株式会社", role: "Machine Learning Engineer", note: "高市場価値AI人材認定・飛び級昇進" },
+  { year: "2025–Present", company: "Algion株式会社", role: "代表取締役CEO" },
+  { year: "2023–Present", company: "PayPay株式会社", role: "Forward Deployed Engineer\nSenior Software Engineer, Machine Learning" },
+  { year: "2021–2023", company: "ソフトバンク株式会社", role: "Machine Learning Engineer", note: "高市場価値AI人材認定" },
   { year: "2015–2021", company: "法政大学・法政大学大学院", role: "Machine Learning / Computer Vision", note: "IEEE BigData 論文発表" },
 ];
 
@@ -90,7 +90,7 @@ export default function HideakiPage() {
             {career.map((item) => (
               <div key={`${item.year}-${item.company}`} className="grid grid-cols-[88px_1fr] gap-4">
                 <p className="text-sm font-semibold text-gray-400">{item.year}</p>
-                <div><h2 className="font-bold text-gray-950">{item.company}</h2><p className="mt-1 text-sm leading-relaxed text-gray-600">{item.role}</p>{item.note && <p className="mt-1 text-sm text-gray-500">{item.note}</p>}</div>
+                <div><h2 className="font-bold text-gray-950">{item.company}</h2><p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-gray-600">{item.role}</p>{item.note && <p className="mt-1 text-sm text-gray-500">{item.note}</p>}</div>
               </div>
             ))}
           </div>
