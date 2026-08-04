@@ -6,12 +6,12 @@ import ShareButton from "@/components/ShareButton";
 
 export const metadata: Metadata = {
   title: "岡本 秀明 | Algion",
-  description: "Algion株式会社 代表取締役CEO、AI & Software Engineer 岡本秀明のデジタル名刺です。",
+  description: "Algion株式会社 代表取締役CEO、Software & Machine Learning Engineer 岡本秀明のデジタル名刺です。",
   alternates: { canonical: "/hideaki/" },
   robots: { index: false, follow: false },
   openGraph: {
     title: "岡本 秀明 | Algion",
-    description: "Algion株式会社 代表取締役CEO、AI & Software Engineer 岡本秀明のデジタル名刺です。",
+    description: "Algion株式会社 代表取締役CEO、Software & Machine Learning Engineer 岡本秀明のデジタル名刺です。",
     url: "/hideaki/",
     type: "profile",
     images: [{ url: "/hideaki-okamoto-profile.jpg", width: 220, height: 293, alt: "岡本 秀明" }],
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "岡本 秀明 | Algion",
-    description: "Algion株式会社 代表取締役CEO、AI & Software Engineer",
+    description: "Algion株式会社 代表取締役CEO、Software & Machine Learning Engineer",
     images: ["/hideaki-okamoto-profile.jpg"],
   },
 };
@@ -55,7 +55,7 @@ export default function HideakiPage() {
             <p className="mt-1 text-lg text-white/55">Hideaki Okamoto</p>
             <div className="mt-6 space-y-1.5">
               <p className="font-semibold">Algion株式会社 代表取締役CEO</p>
-              <p className="font-semibold text-cyan-300">AI & Software Engineer</p>
+              <p className="font-semibold text-cyan-300">Software & Machine Learning Engineer</p>
             </div>
             <p className="mt-6 text-lg leading-relaxed text-white/70">AIを、検証から現場で使える価値へ。</p>
           </div>
