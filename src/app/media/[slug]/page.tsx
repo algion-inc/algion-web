@@ -79,8 +79,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-black [&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:pb-2 [&_h2]:border-b-2 [&_h2]:border-gray-200 [&_h2]:leading-tight
               [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-black [&_h3]:mt-6 [&_h3]:mb-3 [&_h3]:leading-tight
               [&_p]:text-gray-700 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:my-4
-              [&_ul]:my-4 [&_ul]:pl-6
-              [&_li]:text-gray-700 [&_li]:text-lg [&_li]:leading-relaxed [&_li]:my-2 [&_li]:list-disc
+              [&_ul]:my-5 [&_ul]:pl-8 [&_ul]:list-disc
+              [&_ol]:my-5 [&_ol]:pl-8 [&_ol]:list-decimal
+              [&_li]:text-gray-700 [&_li]:text-lg [&_li]:leading-relaxed [&_li]:my-2 [&_li]:pl-1
               [&_strong]:text-black [&_strong]:font-bold
               [&_a]:text-blue-600 [&_a]:no-underline hover:[&_a]:underline
               [&_code]:bg-gray-100 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-red-600 [&_code]:font-mono [&_code]:text-sm

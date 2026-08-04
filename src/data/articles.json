@@ -1,28 +1,92 @@
 {
   "articles": [
     {
+      "id": 2,
+      "title": "生成AI開発で、モデル選定より先に決めるべきこと",
+      "category": "技術解説",
+      "date": "2026年8月4日",
+      "rawDate": "2026-08-04T00:00:00.000Z",
+      "excerpt": "生成AIモデルを比較する前に整理したい、業務目的、入力・出力、失敗条件、評価データ、運用制約について解説します。",
+      "slug": "before-choosing-generative-ai-model-august-2026",
+      "author": "岡本 秀明",
+      "tags": [
+        "生成AI",
+        "モデル選定",
+        "PoC"
+      ],
+      "featured": false
+    },
+    {
+      "id": 3,
+      "title": "Forward Deployed Engineerとして考える、AI構想を本番実装までつなぐ進め方",
+      "category": "技術解説",
+      "date": "2026年4月23日",
+      "rawDate": "2026-04-23T00:00:00.000Z",
+      "excerpt": "Forward Deployed Engineerの視点から、業務理解、役割分担、技術検証、本番実装、運用改善を一続きで進める方法を解説します。",
+      "slug": "fde-ai-production-april-2026",
+      "author": "岡本 秀明",
+      "tags": [
+        "Forward Deployed Engineer",
+        "AI開発",
+        "本番実装"
+      ],
+      "featured": false
+    },
+    {
       "id": 1,
-      "title": "機械学習エンジニアとソフトウェアエンジニアの意識とトレードオフ",
+      "title": "AIエージェントを「動くデモ」で終わらせないための評価設計",
+      "category": "技術解説",
+      "date": "2026年1月27日",
+      "rawDate": "2026-01-27T00:00:00.000Z",
+      "excerpt": "AIエージェントを本番導入できるか判断するために、タスク完了、途中処理、失敗時の挙動、品質・速度・コストをどう評価するか解説します。",
+      "slug": "ai-agent-evaluation-january-2026",
+      "author": "岡本 秀明",
+      "tags": [
+        "AIエージェント",
+        "評価設計",
+        "品質管理"
+      ],
+      "featured": false
+    },
+    {
+      "id": 5,
+      "title": "生成AIの出力を業務システムで扱うための、構造化・検証・フォールバック設計",
+      "category": "技術解説",
+      "date": "2025年11月21日",
+      "rawDate": "2025-11-21T00:00:00.000Z",
+      "excerpt": "生成AIの出力を業務処理へ安全につなぐために必要な、スキーマ、検証、正規化、再試行、フォールバックの考え方を解説します。",
+      "slug": "structured-output-validation-fallback-november-2025",
+      "author": "岡本 秀明",
+      "tags": [
+        "生成AI",
+        "構造化出力",
+        "システム設計"
+      ],
+      "featured": false
+    },
+    {
+      "id": 4,
+      "title": "機械学習とソフトウェア開発の視点から考える、AIシステムのトレードオフ",
       "category": "技術解説",
       "date": "2025年7月9日",
       "rawDate": "2025-07-09T00:00:00.000Z",
-      "excerpt": "MLとSWEの役割や視点の違いを踏まえ、精度・速度・コストのトレードオフを組織としてどう設計・管理すべきかを解説します。",
+      "excerpt": "機械学習とソフトウェア開発で重視されやすい観点の違いを踏まえ、品質・速度・コスト・運用性のトレードオフをどう設計するかを解説します。",
       "slug": "ml-swe-tradeoffs-july-2025",
       "author": "岡本 秀明",
       "tags": [
-        "エンジニア",
-        "MLOps",
+        "機械学習",
+        "ソフトウェア開発",
         "トレードオフ"
       ],
       "featured": false
     },
     {
-      "id": 2,
+      "id": 6,
       "title": "AI Agent勉強会登壇のお知らせ",
       "category": "お知らせ",
       "date": "2025年7月4日",
       "rawDate": "2025-07-04T00:00:00.000Z",
-      "excerpt": "AIエージェント開発に関する最新事例をLT形式で発表しました。当日の資料を公開しています。",
+      "excerpt": "AIエージェント開発の設計・実践に関する知見をLT形式で発表しました。当日の資料を公開しています。",
       "slug": "ai-agent-meetup-july-2025",
       "author": "岡本 秀明",
       "tags": [
@@ -33,7 +97,7 @@
       "featured": false
     },
     {
-      "id": 3,
+      "id": 7,
       "title": "Algion株式会社設立のお知らせ",
       "category": "お知らせ",
       "date": "2025年6月10日",
@@ -51,28 +115,28 @@
   ],
   "latestByCategory": [
     {
-      "id": 1,
-      "title": "機械学習エンジニアとソフトウェアエンジニアの意識とトレードオフ",
+      "id": 2,
+      "title": "生成AI開発で、モデル選定より先に決めるべきこと",
       "category": "技術解説",
-      "date": "2025年7月9日",
-      "rawDate": "2025-07-09T00:00:00.000Z",
-      "excerpt": "MLとSWEの役割や視点の違いを踏まえ、精度・速度・コストのトレードオフを組織としてどう設計・管理すべきかを解説します。",
-      "slug": "ml-swe-tradeoffs-july-2025",
+      "date": "2026年8月4日",
+      "rawDate": "2026-08-04T00:00:00.000Z",
+      "excerpt": "生成AIモデルを比較する前に整理したい、業務目的、入力・出力、失敗条件、評価データ、運用制約について解説します。",
+      "slug": "before-choosing-generative-ai-model-august-2026",
       "author": "岡本 秀明",
       "tags": [
-        "エンジニア",
-        "MLOps",
-        "トレードオフ"
+        "生成AI",
+        "モデル選定",
+        "PoC"
       ],
       "featured": false
     },
     {
-      "id": 2,
+      "id": 6,
       "title": "AI Agent勉強会登壇のお知らせ",
       "category": "お知らせ",
       "date": "2025年7月4日",
       "rawDate": "2025-07-04T00:00:00.000Z",
-      "excerpt": "AIエージェント開発に関する最新事例をLT形式で発表しました。当日の資料を公開しています。",
+      "excerpt": "AIエージェント開発の設計・実践に関する知見をLT形式で発表しました。当日の資料を公開しています。",
       "slug": "ai-agent-meetup-july-2025",
       "author": "岡本 秀明",
       "tags": [
