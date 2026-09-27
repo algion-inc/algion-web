@@ -34,7 +34,7 @@ const expertise = [
 
 const career = [
   { year: "2025–Present", company: "Algion株式会社", role: "代表取締役CEO" },
-  { year: "2023–Present", company: "PayPay株式会社", role: "Forward Deployed Engineer\nSenior Software Engineer, Machine Learning" },
+  { year: "2023–Present", company: "PayPay株式会社", role: "Senior Forward Deployed Engineer\nSenior Software Engineer, Machine Learning" },
   { year: "2021–2023", company: "ソフトバンク株式会社", role: "Machine Learning Engineer", note: "高市場価値AI人材認定" },
   { year: "2015–2021", company: "法政大学・法政大学大学院", role: "Machine Learning / Computer Vision", note: "IEEE BigData 論文発表" },
 ];

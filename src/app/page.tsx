@@ -1283,9 +1283,9 @@ export default function HomePage() {
               <Image src="/hideaki-okamoto-profile.jpg" alt="Algion株式会社 代表取締役CEO 岡本秀明" width={320} height={427} className="aspect-[3/4] w-full max-w-[280px] rounded-lg object-cover" />
               <div>
                 <h2 className="text-3xl font-bold text-gray-950">岡本 秀明 / Hideaki Okamoto</h2>
-                <p className="mt-2 font-semibold text-gray-800">代表取締役CEO / AI &amp; Software Engineer</p>
+                <p className="mt-2 font-semibold text-gray-800">代表取締役CEO / Software &amp; Machine Learning Engineer</p>
                 <p className="mt-5 leading-relaxed text-gray-600">
-                  ソフトバンクで機械学習エンジニアとしてAIプロダクトの研究開発と実装に携わり、高市場価値AI人材に認定。PayPayではForward Deployed Engineer / Senior Software Engineerとして、AIエージェントの開発を主導しています。2025年にAlgion株式会社を設立し、代表取締役CEOとして、AI活用の構想整理から技術検証、本番実装、運用改善までを一貫して支援しています。
+                  ソフトバンクで機械学習エンジニアとしてAIプロダクトの研究開発と実装に携わり、高市場価値AI人材に認定。PayPayではSenior Forward Deployed Engineer / Senior Software Engineer, Machine Learningとして、AIエージェントの開発を主導しています。2025年にAlgion株式会社を設立し、代表取締役CEOとして、AI活用の構想整理から技術検証、本番実装、運用改善までを一貫して支援しています。
                 </p>
                 <Link href="/about" className="mt-6 inline-flex items-center font-semibold text-blue-700 hover:text-blue-900">代表プロフィールの詳細 <ArrowRight className="ml-2" size={17} /></Link>
               </div>

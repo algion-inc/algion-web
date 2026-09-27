@@ -4,7 +4,7 @@ N:岡本;秀明;;;
 FN:岡本 秀明
 ORG:Algion株式会社
 TITLE:代表取締役CEO
-ROLE:AI & Software Engineer
+ROLE:Software & Machine Learning Engineer
 EMAIL;TYPE=INTERNET,WORK:info@algion.co.jp
 URL;TYPE=WORK:https://algion.co.jp/
 URL;TYPE=PROFILE:https://algion.co.jp/hideaki/
@@ -12,5 +12,5 @@ X-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/okkah/
 X-SOCIALPROFILE;TYPE=twitter:https://x.com/h_okkah
 X-SOCIALPROFILE;TYPE=github:https://github.com/okkah
 PHOTO;VALUE=URI:https://algion.co.jp/hideaki-okamoto-profile.jpg
-NOTE:Algion株式会社 代表取締役CEO / AI & Software Engineer
+NOTE:Algion株式会社 代表取締役CEO / Software & Machine Learning Engineer
 END:VCARD

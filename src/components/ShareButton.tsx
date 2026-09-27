@@ -9,7 +9,7 @@ export default function ShareButton() {
   const share = async () => {
     const data = {
       title: "岡本 秀明 | Algion",
-      text: "岡本 秀明 - Algion株式会社 代表取締役CEO / AI & Software Engineer",
+      text: "岡本 秀明 - Algion株式会社 代表取締役CEO / Software & Machine Learning Engineer",
       url: "https://algion.co.jp/hideaki",
     };
 
